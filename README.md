@@ -1,0 +1,2 @@
+# splidot-app
+money manager
