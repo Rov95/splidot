@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "rov",
+    "password": "07.Septiembre",
+    "database": "Vaca",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "rov",
+    "password": "07.Septiembre",
+    "database": "Vaca",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "rov",
+    "password": "07.Septiembre",
+    "database": "Vaca",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
