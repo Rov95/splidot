@@ -1,2 +1,5 @@
-.env
-config.json
+# Ignore .env file
+server/.env
+
+# Ignore config.json file
+server/config/config.json
