@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const Sequelize = require('sequelize');
+const { Sequelize } = require('sequelize');
 const basename = path.basename(__filename);
 const config = require(__dirname + '/../config/config.json').development;
 const db = {};
@@ -26,12 +26,12 @@ fs
 db.User.belongsToMany(db.Group, { through: db.UserGroup });
 db.Group.belongsToMany(db.User, { through:db.UserGroup });
 
-db.Expense.belongsTo(db.Group, { foreignKey: 'group_id' });
-db.Expense.belongsTo(db.User, { foreignKey: 'user_id' });
-db.Expense.belongsTo(db.Category, { foreignKey: 'group_id' });
+// db.Expense.belongsTo(db.Group, { foreignKey: 'group_id' });
+// db.Expense.belongsTo(db.User, { foreignKey: 'user_id' });
+// db.Expense.belongsTo(db.Category, { foreignKey: 'group_id' });
 
-db.User.hasMany(db.ExpenseShare, { foreignKey: 'user_id' });
-db.Expense.hasMany(db.ExpenseShare, { foreignKey: 'expense_id' });
+// db.User.hasMany(db.ExpenseShare, { foreignKey: 'user_id' });
+// db.Expense.hasMany(db.ExpenseShare, { foreignKey: 'expense_id' });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

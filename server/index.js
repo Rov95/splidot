@@ -1,27 +1,48 @@
 require('dotenv').config();
 const express = require('express');
+const cookieParser = require('cookie-parser')
+const session = require('express-session');
 const router = require('./router');
-const { requireAuth, clerkMiddleware } = require('@clerk/express');
+const authMiddleware = require('./middlewares/auth')
+const db = require('./models');
+const cors = require('cors');
 
 const app = express();
 
 
-// if (!process.env.CLERK_SECRET_KEY) {
-//     throw new Error("Clerk keys are missing from environment variables");
-// }
+if (!process.env.SECRET_KEY) {
+    throw new Error("Clerk keys are missing from environment variables");
+}
 
-app.use(clerkMiddleware({ secretKey: process.env.PUBLISHABLE_KEY }));
-
+app.use(cors());
 app.use(express.json());
+app.use(cookieParser())
+
+app.use(
+    session({
+        name: 'rovix',
+        secret: process.env.SECRET_KEY,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: false,
+            httpOnly: true,
+            maxAge: 1000 * 60 *60,
+        },
+        proxy: true,
+    })
+)
 
 
-app.use('/users', requireAuth(), router.userRouter);
-app.use('/groups', requireAuth(), router.groupRouter);
-app.use('/expenses', requireAuth(), router.expenseRouter);
-app.use('/categories', requireAuth(), router.categoryRouter);
+app.use('/users', router.userRouter);
+app.use('/groups', authMiddleware, router.groupRouter);
+app.use('/expenses', authMiddleware, router.expenseRouter);
+app.use('/categories', authMiddleware, router.categoryRouter);
 
 const port = 3000; 
-app.listen(port, () => {
-    console.log('Server running on http://127.0.0.1:3000');
-})
 
+db.sequelize.sync(/*{force: true}*/).then(() => {
+    app.listen(port, () => {
+        console.log('Server running on http://127.0.0.1:3000');
+    })
+}).catch(error => console.error('Failed to sync DB: ', error));
