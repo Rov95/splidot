@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SignIn from '../SignIn/index';
 import SignUp from '../SignUp/index';
 
-const Welcome = () => {
+const Welcome = ({ setIsSignedIn }) => {
     const [showSignUp, setShowSignUp] = useState(false);
 
     const toggleSignUp = () => {
@@ -16,7 +16,7 @@ const Welcome = () => {
                 <SignUp toggleSignUp={toggleSignUp} />
             ) : (
                 <>
-                    <SignIn />
+                    <SignIn setIsSignedIn={setIsSignedIn} />
                     <p>
                         Don't have an account?{' '}
                         <span className='sign-up-option' onClick={toggleSignUp}>
@@ -26,8 +26,8 @@ const Welcome = () => {
                 </>
             )}
         </div>
-    )
-}
+    );
+};
 
 export default Welcome;
 

@@ -23,8 +23,8 @@ fs
     db[model.name] = model;
   });
 
-db.User.belongsToMany(db.Group, { through: db.UserGroup });
-db.Group.belongsToMany(db.User, { through:db.UserGroup });
+// db.User.belongsToMany(db.Group, { through: db.UserGroup });
+// db.Group.belongsToMany(db.User, { through:db.UserGroup });
 
 // db.Expense.belongsTo(db.Group, { foreignKey: 'group_id' });
 // db.Expense.belongsTo(db.User, { foreignKey: 'user_id' });

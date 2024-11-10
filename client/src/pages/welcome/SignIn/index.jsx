@@ -1,21 +1,30 @@
 import React, { useState } from "react";
-import { signIn } from '../../../services/authService'
+import { signIn } from '../../../services/authService';
+import { Navigate } from 'react-router-dom';
 
-const SignIn = () => {
+const SignIn = ({ setIsSignedIn }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+    const [redirect, setRedirect] = useState(false);  // new state for redirect
 
-    const handleSignIn = async (e) => {8-
+    const handleSignIn = async (e) => {
         e.preventDefault();
 
         try {
             const response = await signIn({ email, password });
-            console.log('Sign in succesful: ', response);
+            console.log('Sign in successful: ', response);
+            setIsSignedIn(true);  
+            setRedirect(true);   
         } catch (err) {
-            setError(err.message)
+            setError(err.message);
         }
     };
+
+    if (redirect) {
+        // Redirect to dashboard after successful sign-in
+        return <Navigate to="/dashboard" />;
+    }
 
     return (
         <form onSubmit={handleSignIn} className="sign-in-form">
@@ -35,12 +44,11 @@ const SignIn = () => {
                 required
             />
             <button type="submit">Sign In</button>
+            {error && <p className="error">{error}</p>}
         </form>
-    )
-}
+    );
+};
 
 export default SignIn;
-
-
 
 
