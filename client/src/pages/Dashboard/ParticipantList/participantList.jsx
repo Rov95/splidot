@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getGroupParticipants } from '../../../services/groupService';
 
-const ParticipantList = ({ groupId }) => {
-    const [participants, setParticipants] = useState([]);
+const ParticipantList = ({ groupId, participants, setParticipants }) => {
+    // const [participants, setParticipants] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -11,14 +11,18 @@ const ParticipantList = ({ groupId }) => {
         const fetchParticipants = async () => {
             try {
                 const data = await getGroupParticipants(groupId);
-                setParticipants(data);
+                const initialParticipants = data.map((participant) => ({
+                    ...participant,
+                    totalPaid: 0,
+                }));
+                setParticipants(initialParticipants);
             } catch (err) {
                 setError(err.message);
             }
         };
 
         fetchParticipants();
-    }, [groupId]);
+    }, [groupId, setParticipants]);
 
     return (
         <div className="participant-list">

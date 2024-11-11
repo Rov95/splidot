@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import GroupModal from '../GroupModal/index';
 import GroupList from '../GroupList/groupList';
 import ParticipantList from '../ParticipantList/participantList';
+import AddExpense from '../AddExpense/addExpense';
 import LogoutButton from '../LogOut/logOut'; 
 import { getGroups } from '../../../services/groupService';
 
@@ -9,7 +10,8 @@ const Dashboard = ({ setIsSignedIn }) => {
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedGroupId, setSelectedGroupId] = useState(null);
-    
+    const [participants, setParticipants] = useState([]);
+
     const toggleModal = () => setShowModal(!showModal);
 
     const fetchGroups = async () => {
@@ -30,19 +32,34 @@ const Dashboard = ({ setIsSignedIn }) => {
         setShowModal(false);  // Close modal after refreshing groups
     };
 
+    const handleAddExpense = ({ payer, amount }) => {
+        setParticipants(prevParticipants =>
+            prevParticipants.map(participant =>
+                participant.user_id === payer
+                    ? { ...participant, totalPaid: participant.totalPaid + amount }
+                    : participant
+            )
+        );
+    };
+
 
     return (
         <div className="dashboard">
             <h1>Create new group</h1>
             <button onClick={toggleModal} className="add-group-button">+</button>
-            
+
             {showModal && <GroupModal onClose={() => setShowModal(false)} onGroupCreated={handleGroupCreated} />}
-            
+
             <div className="group-manager">
                 <GroupList groups={groups} onSelectGroup={setSelectedGroupId} />
-                {selectedGroupId && <ParticipantList groupId={selectedGroupId} />}
+                {selectedGroupId && (
+                    <>
+                        <ParticipantList groupId={selectedGroupId} participants={participants} setParticipants={setParticipants} />
+                        <AddExpense participants={participants} onAddExpense={handleAddExpense} />
+                    </>
+                )}
             </div>
-            <LogoutButton setIsSignedIn={setIsSignedIn} /> 
+            <LogoutButton setIsSignedIn={setIsSignedIn} />
         </div>
     );
 };
