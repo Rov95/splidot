@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { signIn } from '../../../services/authService';
 import { Navigate } from 'react-router-dom';
+import './styles.css'
 
 const SignIn = ({ setIsSignedIn }) => {
     const [email, setEmail] = useState('');
@@ -28,7 +29,7 @@ const SignIn = ({ setIsSignedIn }) => {
 
     return (
         <form onSubmit={handleSignIn} className="sign-in-form">
-            <h2 className="title">Sign In</h2>
+            <h2 className="form-title">Sign In</h2>
             <label>Email</label>
             <input 
                 type="email"
@@ -43,7 +44,7 @@ const SignIn = ({ setIsSignedIn }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
             />
-            <button type="submit">Sign In</button>
+            <button type="submit" className="form-button">Sign In</button>
             {error && <p className="error">{error}</p>}
         </form>
     );

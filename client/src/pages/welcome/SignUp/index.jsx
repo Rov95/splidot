@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { signUp } from "../../../services/authService";
+import './styles.css'
 
 const SignUp = ({ toggleSignUp }) => {
     const [email, setEmail] = useState('');
@@ -34,12 +35,12 @@ const SignUp = ({ toggleSignUp }) => {
             <input 
                 type="text"
                 value={lastName}
-                onChange={(e => setLastName(e.target.value))}
+                onChange={(e) => setLastName(e.target.value)}
                 required
             />
             <label>Email</label>
             <input 
-                type="text"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -51,8 +52,8 @@ const SignUp = ({ toggleSignUp }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
             />
-            <button type="submit">Sign Up</button>
-            <p onClick={() => toggleSignUp()} className="back-to-sign">
+            <button type="submit" className="form-button">Sign Up</button>
+            <p onClick={toggleSignUp} className="back-to-sign">
                 Back to Sign In
             </p>
         </form>

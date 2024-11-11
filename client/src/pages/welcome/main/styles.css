@@ -1,0 +1,26 @@
+.welcome-page {
+    background-color: #182645;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #d1d8e0;
+}
+
+.welcome-title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.signup-prompt {
+    color: #d1d8e0;
+    margin-top: 1rem;
+}
+
+.sign-up-option {
+    color: #45aaf2;
+    cursor: pointer;
+    font-weight: bold;
+}

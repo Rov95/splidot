@@ -8,7 +8,7 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard">
-            <h1>Your Groups</h1>
+            <h1>Create new group</h1>
             <button onClick={toggleModal} className="add-group-button">+</button>
             
             {showModal && <GroupModal onClose={toggleModal} />}

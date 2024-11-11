@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SignIn from '../SignIn/index';
 import SignUp from '../SignUp/index';
+import './styles.css';
 
 const Welcome = ({ setIsSignedIn }) => {
     const [showSignUp, setShowSignUp] = useState(false);
@@ -11,13 +12,13 @@ const Welcome = ({ setIsSignedIn }) => {
 
     return (
         <div className='welcome-page'>
-            <h1>Welcome</h1>
+            <h1 className="welcome-title">Welcome to Splidot!</h1>
             {showSignUp ? (
                 <SignUp toggleSignUp={toggleSignUp} />
             ) : (
                 <>
                     <SignIn setIsSignedIn={setIsSignedIn} />
-                    <p>
+                    <p className="signup-prompt">
                         Don't have an account?{' '}
                         <span className='sign-up-option' onClick={toggleSignUp}>
                             Sign up
