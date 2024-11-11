@@ -30,7 +30,7 @@ function App() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+              <Dashboard setIsSignedIn={setIsSignedIn}/>
             </PrivateRoute>
           }
         />

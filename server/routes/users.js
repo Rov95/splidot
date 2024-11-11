@@ -56,7 +56,8 @@ router.post('/login', async (req, res) => {
     }
 })
 
-router.get('/me', authMiddleware,async (req, res) => {
+//tengo que volver a habilitar autorizacion 
+router.get('/me',async (req, res) => {
     console.log("Session ID: ", req.session.userId)
     try {
         if (!req.session.userId) {
@@ -72,7 +73,7 @@ router.get('/me', authMiddleware,async (req, res) => {
     }
 })
 
-router.post('/logout', authMiddleware, (req, res) => {
+router.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             return res.status(500).json({ error: "Error logging out" });

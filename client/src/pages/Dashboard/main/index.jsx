@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import GroupModal from '../GroupModal/index';
 import GroupList from '../GroupList/groupList';
 import ParticipantList from '../ParticipantList/participantList';
+import LogoutButton from '../LogOut/logOut'; 
 import { getGroups } from '../../../services/groupService';
 
-const Dashboard = () => {
+const Dashboard = ({ setIsSignedIn }) => {
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -41,6 +42,7 @@ const Dashboard = () => {
                 <GroupList groups={groups} onSelectGroup={setSelectedGroupId} />
                 {selectedGroupId && <ParticipantList groupId={selectedGroupId} />}
             </div>
+            <LogoutButton setIsSignedIn={setIsSignedIn} /> 
         </div>
     );
 };

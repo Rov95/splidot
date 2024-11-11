@@ -33,3 +33,19 @@ export const signIn = async (credentials) => {
         throw error;
     }
 }
+
+export const signOut = async () => {
+    try {
+        const response = await fetch(`${API_URL}/logout`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+        if (!response.ok) {
+            throw new Error('Error logging out, please try again.');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error signing out: ', error);
+        throw error;
+    }
+};
