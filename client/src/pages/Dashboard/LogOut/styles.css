@@ -1,0 +1,35 @@
+.logout-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.logout-button {
+    background-color: #ff5a5f; /* Bright coral for attention */
+    color: white;
+    padding: 12px 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button:hover {
+    background-color: #e0474e; /* Darker coral for hover */
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.logout-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #ffb3b3; /* Soft pink outline */
+}
+
+.logout-button:active {
+    background-color: #d83f40;
+    transform: translateY(0);
+}

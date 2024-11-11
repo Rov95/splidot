@@ -5,6 +5,7 @@ import ParticipantList from '../ParticipantList/participantList';
 import AddExpense from '../AddExpense/addExpense';
 import LogoutButton from '../LogOut/logOut'; 
 import { getGroups } from '../../../services/groupService';
+import './styles.css'
 
 const Dashboard = ({ setIsSignedIn }) => {
     const [groups, setGroups] = useState([]);
@@ -29,7 +30,7 @@ const Dashboard = ({ setIsSignedIn }) => {
 
     const handleGroupCreated = async () => {
         await fetchGroups();
-        setShowModal(false);  // Close modal after refreshing groups
+        setShowModal(false); 
     };
 
     const handleAddExpense = ({ payer, amount }) => {
@@ -45,21 +46,32 @@ const Dashboard = ({ setIsSignedIn }) => {
 
     return (
         <div className="dashboard">
-            <h1>Create new group</h1>
-            <button onClick={toggleModal} className="add-group-button">+</button>
+            <div className="area-one">
+                <button onClick={toggleModal} className="add-group-button">+</button>
+                {showModal && <GroupModal onClose={() => setShowModal(false)} onGroupCreated={handleGroupCreated} />}
 
-            {showModal && <GroupModal onClose={() => setShowModal(false)} onGroupCreated={handleGroupCreated} />}
+                <div className="group-manager">
+                    <GroupList groups={groups} onSelectGroup={setSelectedGroupId} />
+                    {selectedGroupId && (
+                        <ParticipantList 
+                            groupId={selectedGroupId} 
+                            participants={participants} 
+                            setParticipants={setParticipants} 
+                        />
+                    )}
+                </div>
+                
+                <LogoutButton setIsSignedIn={setIsSignedIn} />
+            </div>
 
-            <div className="group-manager">
-                <GroupList groups={groups} onSelectGroup={setSelectedGroupId} />
+            <div className="area-three">
                 {selectedGroupId && (
-                    <>
-                        <ParticipantList groupId={selectedGroupId} participants={participants} setParticipants={setParticipants} />
-                        <AddExpense participants={participants} onAddExpense={handleAddExpense} />
-                    </>
+                    <AddExpense 
+                        participants={participants} 
+                        onAddExpense={handleAddExpense} 
+                    />
                 )}
             </div>
-            <LogoutButton setIsSignedIn={setIsSignedIn} />
         </div>
     );
 };

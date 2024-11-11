@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createGroup } from '../../../services/groupService';
+import './styles.css'
 
 const GroupModal = ({ onClose, onGroupCreated }) => {
     const [groupName, setGroupName] = useState('');
@@ -34,32 +35,35 @@ const GroupModal = ({ onClose, onGroupCreated }) => {
     };
 
     return (
-        <div className="modal">
-            <div className="modal-content">
-                <h2>Create New Group</h2>
-                <form onSubmit={handleCreateGroup}>
-                    <label>Group Name</label>
+        <div className="modal-overlay">
+            <div className="modal">
+                <h2 className="modal-title">Create New Group</h2>
+                <form onSubmit={handleCreateGroup} className="modal-form">
+                    <label className="input-label">Group Name</label>
                     <input
                         type="text"
                         value={groupName}
                         onChange={(e) => setGroupName(e.target.value)}
+                        className="input-field"
                         required
                     />
                     {participants.map((participant, index) => (
                         <div key={index} className="participant-input">
-                            <label>Participant {index + 1}</label>
+                            <label className="input-label">Participant {index + 1}</label>
                             <input
                                 type="text"
                                 value={participant}
                                 onChange={(e) => handleParticipantChange(index, e.target.value)}
+                                className="input-field"
                                 required
                             />
                         </div>
                     ))}
-                    <button type="button" onClick={addParticipantField}>Add a New Participant</button>
-                    <button type="submit">Create Group</button>
+                    <button type="button" onClick={addParticipantField} className="add-participant-btn">Add a New Participant</button>
+                    <button type="submit" className="submit-btn">Create Group</button>
                 </form>
-                <button onClick={onClose} className="close-modal">Close</button>
+                {error && <p className="error-message">{error}</p>}
+                <button onClick={onClose} className="close-modal-btn">Close</button>
             </div>
         </div>
     );

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getGroupParticipants } from '../../../services/groupService';
+import './styles.css';
 
 const ParticipantList = ({ groupId, participants, setParticipants }) => {
-    // const [participants, setParticipants] = useState([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -25,14 +25,18 @@ const ParticipantList = ({ groupId, participants, setParticipants }) => {
     }, [groupId, setParticipants]);
 
     return (
-        <div className="participant-list">
-            <h2>Participants</h2>
-            {error && <p className="error">{error}</p>}
-            <ul>
-                {participants.map((participant) => (
-                    <li key={participant.user_id}>{participant.name}</li>
-                ))}
-            </ul>
+        <div className="participant-list-container">
+            <div className="participant-list">
+                <h2 className="participant-title">Participants</h2>
+                {error && <p className="error-message">{error}</p>}
+                <ul className="participant-items">
+                    {participants.map((participant) => (
+                        <li key={participant.user_id} className="participant-item">
+                            {participant.name}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };

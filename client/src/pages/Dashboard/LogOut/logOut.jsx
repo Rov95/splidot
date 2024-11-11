@@ -1,5 +1,6 @@
 import React from 'react';
 import { signOut } from '../../../services/authService';
+import './styles.css';
 
 const LogoutButton = ({ setIsSignedIn }) => {
     const handleLogout = async () => {
@@ -12,9 +13,11 @@ const LogoutButton = ({ setIsSignedIn }) => {
     };
 
     return (
-        <button onClick={handleLogout} className="logout-button">
-            Log Out
-        </button>
+        <div className="logout-button-container">
+            <button onClick={handleLogout} className="logout-button">
+                Log Out
+            </button>
+        </div>
     );
 };
 
