@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { createGroup } from '../../../services/groupService';
 
-const GroupModal = ({ onClose }) => {
+const GroupModal = ({ onClose, onGroupCreated }) => {
     const [groupName, setGroupName] = useState('');
     const [participants, setParticipants] = useState(['']);
     const [error, setError] = useState(null);
 
     const addParticipantField = () => setParticipants([...participants, '']);
+    
     const handleParticipantChange = (index, value) => {
         const updatedParticipants = [...participants];
         updatedParticipants[index] = value;
@@ -23,6 +24,7 @@ const GroupModal = ({ onClose }) => {
 
         try {
             await createGroup(groupData);
+            onGroupCreated();
             setGroupName('');
             setParticipants(['']);  // Reset form if creation is successful
             onClose();

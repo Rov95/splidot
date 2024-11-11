@@ -15,8 +15,8 @@ router.post('/', async (req, res) => {
             const userGroup = await UserGroup.create({
                 user_id: uuid4(),  // Generate a UUID for each participant
                 group_id: group.group_id,
+                name: participantName,
             });
-            userGroup.name = participantName;
         }
 
         res.status(201).json(group);
@@ -27,10 +27,22 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const groups = await Group.findAll({
-            include: { model: UserGroup, as: 'participants' }
-        });
+        const groups = await Group.findAll();
         res.json(groups);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/:groupId/participants', async (req, res) => {
+    const { groupId } = req.params;
+
+    try {
+        const participants = await UserGroup.findAll({
+            where: { group_id: groupId },
+            attributes: ['user_id', 'name'],
+        });
+        res.json(participants);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

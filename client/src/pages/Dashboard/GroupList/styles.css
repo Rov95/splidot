@@ -1,0 +1,19 @@
+.group-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.group-list li {
+    cursor: pointer;
+    margin: 8px 0;
+}
+
+/* ParticipantList.css */
+.participant-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.participant-list li {
+    margin: 8px 0;
+}
