@@ -32,7 +32,7 @@ const ParticipantList = ({ groupId, participants, setParticipants }) => {
                 <ul className="participant-items">
                     {participants.map((participant) => (
                         <li key={participant.user_id} className="participant-item">
-                            {participant.name}
+                            {participant.name} - Total Paid: ${participant.totalPaid}
                         </li>
                     ))}
                 </ul>
@@ -42,3 +42,4 @@ const ParticipantList = ({ groupId, participants, setParticipants }) => {
 };
 
 export default ParticipantList;
+

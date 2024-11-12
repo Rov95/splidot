@@ -67,3 +67,4 @@ const AddExpense = ({ participants, onAddExpense }) => {
 };
 
 export default AddExpense;
+

@@ -3,3 +3,5 @@ server/.env
 
 # Ignore config.json file
 server/config/config.json
+
+server/node_modules
