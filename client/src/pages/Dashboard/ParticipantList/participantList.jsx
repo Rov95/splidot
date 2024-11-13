@@ -11,10 +11,14 @@ const ParticipantList = ({ groupId, participants, setParticipants }) => {
         const fetchParticipants = async () => {
             try {
                 const data = await getGroupParticipants(groupId);
-                const initialParticipants = data.map((participant) => ({
+
+                const initialParticipants = data.map((participant, index) => ({
                     ...participant,
+                    name: index === 0 ? 'Me' : participant.name, // Set first participant as 'Me'
                     totalPaid: 0,
+                    icon: `/cat${(index % 6) + 1}.svg` // Assign icons cyclically from cat1.svg to cat6.svg
                 }));
+                
                 setParticipants(initialParticipants);
             } catch (err) {
                 setError(err.message);
@@ -24,6 +28,7 @@ const ParticipantList = ({ groupId, participants, setParticipants }) => {
         fetchParticipants();
     }, [groupId, setParticipants]);
 
+
     return (
         <div className="participant-list-container">
             <div className="participant-list">
@@ -32,7 +37,8 @@ const ParticipantList = ({ groupId, participants, setParticipants }) => {
                 <ul className="participant-items">
                     {participants.map((participant) => (
                         <li key={participant.user_id} className="participant-item">
-                            {participant.name} - Total Paid: ${participant.totalPaid}
+                            <img src={participant.icon} alt="Participant icon" className="participant-icon" />
+                            {participant.name} / Share: ${participant.totalPaid}
                         </li>
                     ))}
                 </ul>

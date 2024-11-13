@@ -11,11 +11,15 @@ import './styles.css'
 const Dashboard = ({ setIsSignedIn }) => {
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [selectedGroupId, setSelectedGroupId] = useState(null);
     const [participants, setParticipants] = useState([]);
-    const [expenses, setExpenses] = useState([]); // New state for storing expenses
+    const [expenses, setExpenses] = useState([]);
+    const [totalPaid, setTotalPaid] = useState(0); 
+    const [settlements, setSettlements] = useState([]);
 
     const toggleModal = () => setShowModal(!showModal);
+    const toggleExpenseModal = () => setShowExpenseModal(!showExpenseModal);
 
     const fetchGroups = async () => {
         try {
@@ -36,7 +40,6 @@ const Dashboard = ({ setIsSignedIn }) => {
     };
 
     const handleAddExpense = ({ payer, amount, category, expenseName }) => {
-        // Update the participant's totalPaid amount
         setParticipants(prevParticipants =>
             prevParticipants.map(participant =>
                 participant.user_id === payer
@@ -45,12 +48,46 @@ const Dashboard = ({ setIsSignedIn }) => {
             )
         );
 
-        // Add the new expense to the expense list
+        // Adding the new expense to the expense list
         const payerName = participants.find(participant => participant.user_id === payer)?.name || 'Unknown';
         setExpenses(prevExpenses => [
             ...prevExpenses,
             { payerName, amount, category, expenseName }
         ]);
+
+        // Updating the general total paid
+        setTotalPaid(prevTotal => prevTotal + amount);
+    };
+
+    const calculateSettlements = () => {
+        const fairShare = totalPaid / participants.length;
+        const balances = participants.map(participant => ({
+            ...participant,
+            balance: participant.totalPaid - fairShare
+        }));
+
+        const payers = balances.filter(p => p.balance < 0).map(p => ({ ...p, balance: Math.abs(p.balance) }));
+        const payees = balances.filter(p => p.balance > 0);
+
+        const newSettlements = [];
+        let i = 0, j = 0;
+
+        while (i < payers.length && j < payees.length) {
+            const payer = payers[i];
+            const payee = payees[j];
+            const amount = Math.min(payer.balance, payee.balance);
+
+            newSettlements.push({ from: payer.name, to: payee.name, amount });
+
+            // Adjusting balances
+            payer.balance -= amount;
+            payee.balance -= amount;
+
+            if (payer.balance === 0) i++;
+            if (payee.balance === 0) j++;
+        }
+
+        setSettlements(newSettlements);
     };
 
     return (
@@ -76,12 +113,35 @@ const Dashboard = ({ setIsSignedIn }) => {
             <div className="area-three">
                 {selectedGroupId && (
                     <>
-                        <AddExpense 
-                            participants={participants} 
-                            onAddExpense={handleAddExpense} 
-                        />
-                        <ExpenseList expenses={expenses} /> {/* Display the ExpenseList below AddExpense */}
+                        <button onClick={toggleExpenseModal} className="add-expense-btn">Add Expense</button>
+                        {showExpenseModal && (
+                            <AddExpense 
+                                participants={participants} 
+                                onAddExpense={handleAddExpense} 
+                                onClose={toggleExpenseModal}
+                            />
+                        )}
+                        <ExpenseList expenses={expenses} />
+                        <div className="total-paid">
+                            <h3>Total Paid: ${totalPaid.toFixed(2)}</h3>
+                        </div>
                     </>
+                )}
+            </div>
+            <div className="settlement-section">
+                <button onClick={calculateSettlements} className="splidot-button">Splidot</button>
+                
+                {settlements.length > 0 && (
+                    <div className="settlements-display">
+                        <h3>Settlement Summary</h3>
+                        <ul>
+                            {settlements.map((settlement, index) => (
+                                <li key={index}>
+                                    {settlement.from} pays {settlement.to}: ${settlement.amount.toFixed(2)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 )}
             </div>
         </div>
@@ -89,4 +149,5 @@ const Dashboard = ({ setIsSignedIn }) => {
 };
 
 export default Dashboard;
+
 

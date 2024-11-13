@@ -2,11 +2,14 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 20px;
-    padding: 20px; 
-    height: 100vh;
-    background-color: #297743;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    gap: 5px;
+    padding: 20px;
+    min-height: 100vh; 
+    background-image: url('/leafs.svg');
+    background-size: cover;
+    background-position: center; 
+    background-attachment: fixed; 
+    background-repeat: no-repeat; 
 }
 
 .area-one {
@@ -26,8 +29,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-    background-color: #135b4427;
+    padding: 10px;
+    max-height: 400px;
+    background-color: #e6f7f181;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -57,24 +61,76 @@
     flex-direction: column;
     gap: 10px;
     padding: 10px;
-    background-color: #289d5300;
+    background-color: #289d5398;
 }
 
-.logout-button {
-    margin-top: auto;
-    background-color: #d32f2f;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 30px;
-    font-size: 1em;
+.total-paid {
+    margin-top: 20px;
+    font-size: 1.2rem;
     font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #333;
 }
 
-.logout-button:hover {
-    background-color: #b71c1c;
+.settlement-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #e6f7f193; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    max-height: 500px;
+    margin: 20px auto;
+}
+
+.splidot-button {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #2a9d8f; 
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 15px;
+}
+
+.splidot-button:hover {
+    background-color: #21867a;
+    transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
+
+.settlements-display {
+    margin-top: 15px;
+    color: #004d40;
+    font-size: 1rem;
+}
+
+.settlements-display h3 {
+    font-weight: bold;
+    color: #00796b;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.settlements-display ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.settlements-display li {
+    margin: 8px 0;
+    padding: 10px;
+    background-color: #d0f0e5;
+    color: #004d40;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    font-weight: 500;
+}
+

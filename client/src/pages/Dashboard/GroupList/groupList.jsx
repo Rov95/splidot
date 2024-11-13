@@ -14,14 +14,14 @@ const GroupList = ({ groups, onSelectGroup }) => {
     const handleToggleView = () => {
         setShowAllGroups(!showAllGroups);
         if (!showAllGroups) {
-            setSelectedGroup(null); // Clear selected group when showing all
+            setSelectedGroup(null); 
         }
     };
 
 
     return (
         <div className="group-list" onClick={handleToggleView}>
-            <h2 className="group-list-title">Your Groups</h2>
+            <h2 className="group-list-title">Groups</h2>
             <ul className="group-list-items">
                 {showAllGroups ? (
                     groups.map((group) => (

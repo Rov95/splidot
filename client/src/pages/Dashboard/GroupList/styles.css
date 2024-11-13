@@ -1,5 +1,5 @@
 .group-list {
-    background-color: #114523;
+    background-color: #86ad49;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -49,6 +49,6 @@
     margin: 20px auto;
     border-radius: 25px;
     font-size: 1.4em;
-    color: #b22222;
+    color: #916622;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
