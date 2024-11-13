@@ -12,7 +12,10 @@ const Welcome = ({ setIsSignedIn }) => {
 
     return (
         <div className='welcome-page'>
-            <h1 className="welcome-title">Welcome to Splidot!</h1>
+            <h1 className="welcome-title">
+                Welcome to Splidot!
+                <img src="/dot.svg" alt="dot icon" className="welcome-dot-icon" />
+            </h1>
             {showSignUp ? (
                 <SignUp toggleSignUp={toggleSignUp} />
             ) : (

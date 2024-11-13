@@ -32,7 +32,7 @@ const ParticipantList = ({ groupId, participants, setParticipants }) => {
     return (
         <div className="participant-list-container">
             <div className="participant-list">
-                <h2 className="participant-title">Participants</h2>
+                <h2 className="participant-title">Friends</h2>
                 {error && <p className="error-message">{error}</p>}
                 <ul className="participant-items">
                     {participants.map((participant) => (

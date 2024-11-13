@@ -17,6 +17,7 @@ const Dashboard = ({ setIsSignedIn }) => {
     const [expenses, setExpenses] = useState([]);
     const [totalPaid, setTotalPaid] = useState(0); 
     const [settlements, setSettlements] = useState([]);
+    const [payedSettlements, setPayedSettlements] = useState(new Set());
 
     const toggleModal = () => setShowModal(!showModal);
     const toggleExpenseModal = () => setShowExpenseModal(!showExpenseModal);
@@ -90,6 +91,10 @@ const Dashboard = ({ setIsSignedIn }) => {
         setSettlements(newSettlements);
     };
 
+    const handleMarkAsPayed = (index) => {
+        setPayedSettlements((prevSet) => new Set(prevSet).add(index)); // Add index to payed set
+    };
+
     return (
         <div className="dashboard">
             <div className="area-one">
@@ -129,15 +134,33 @@ const Dashboard = ({ setIsSignedIn }) => {
                 )}
             </div>
             <div className="settlement-section">
-                <button onClick={calculateSettlements} className="splidot-button">Splidot</button>
+                <button onClick={calculateSettlements} className="splidot-button">
+                    <img src="/dot.svg" alt="dot icon" className="dot-icon" />
+                    Splidot
+                </button>
                 
                 {settlements.length > 0 && (
                     <div className="settlements-display">
-                        <h3>Settlement Summary</h3>
+                        <h3>Dot says:</h3>
                         <ul>
                             {settlements.map((settlement, index) => (
-                                <li key={index}>
-                                    {settlement.from} pays {settlement.to}: ${settlement.amount.toFixed(2)}
+                                <li key={index} className="settlement-item">
+                                    <span>
+                                        {settlement.from} pays {settlement.to}: ${settlement.amount.toFixed(2)}
+                                    </span>
+                                    
+                                    {payedSettlements.has(index) ? (
+                                        <img src="/check.svg" alt="check icon" className="status-icon" />
+                                    ) : (
+                                        <>
+                                            <button 
+                                                onClick={() => handleMarkAsPayed(index)} 
+                                                className="payed-button">
+                                                Paid off
+                                            </button>
+                                            <img src="/cross.svg" alt="cross icon" className="status-icon" />
+                                        </>
+                                    )}
                                 </li>
                             ))}
                         </ul>

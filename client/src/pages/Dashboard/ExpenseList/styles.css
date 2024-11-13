@@ -1,0 +1,53 @@
+.expense-list-container {
+    max-height: 300px; 
+    overflow-y: auto; 
+    padding-right: 10px; 
+    border: 1px solid #e0e0e0; 
+    border-radius: 8px;
+}
+
+.expense-list h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.expense-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.expense-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #3bb584b4;
+    padding: 7px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.expense-list li:hover {
+    background-color: #f0f4f8;
+}
+
+.expense-list li strong {
+    color: #324509;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.expense-list li span {
+    color: #1b0808;
+}
+
+.expense-list li::before {
+    content: '•';
+    color: #085937c7;
+    font-size: 1.5rem;
+    margin-right: 7px;
+}

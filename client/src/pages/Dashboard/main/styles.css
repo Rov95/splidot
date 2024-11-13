@@ -39,7 +39,7 @@
 .add-group-button {
     width: 60px;
     height: 60px;
-    background-color: hsla(142, 73%, 48%, 0.567);
+    background-color: hsl(142, 73%, 48%);
     color: rgb(255, 255, 255);
     border: none;
     border-radius: 50%;
@@ -104,6 +104,12 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
+.dot-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
 .settlements-display {
     margin-top: 15px;
     color: #004d40;
@@ -132,5 +138,37 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     font-size: 1rem;
     font-weight: 500;
+}
+
+.settlement-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #d0f0e5;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 8px 0;
+}
+
+.payed-button {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    color: #ffffff;
+    background-color: #4caf50; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.payed-button:hover {
+    background-color: #388e3c; 
+}
+
+.status-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px; 
 }
 
