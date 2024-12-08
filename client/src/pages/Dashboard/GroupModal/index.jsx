@@ -27,7 +27,7 @@ const GroupModal = ({ onClose, onGroupCreated }) => {
             await createGroup(groupData);
             onGroupCreated();
             setGroupName('');
-            setParticipants(['']);  // Reset form if creation is successful
+            setParticipants(['']); 
             onClose();
         } catch (error) {
             setError(error.message);

@@ -9,12 +9,10 @@ function App() {
     return JSON.parse(localStorage.getItem('isSignedIn')) || false;
   });
 
-  // Update localStorage when `isSignedIn` changes
   useEffect(() => {
     localStorage.setItem('isSignedIn', JSON.stringify(isSignedIn));
   }, [isSignedIn]);
   
-  // PrivateRoute component that checks authentication
   const PrivateRoute = ({ children }) => {
     return isSignedIn ? children : <Navigate to="/" />;
   };

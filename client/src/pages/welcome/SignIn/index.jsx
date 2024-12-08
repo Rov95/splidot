@@ -7,7 +7,7 @@ const SignIn = ({ setIsSignedIn }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
-    const [redirect, setRedirect] = useState(false);  // new state for redirect
+    const [redirect, setRedirect] = useState(false);  
 
     const handleSignIn = async (e) => {
         e.preventDefault();
