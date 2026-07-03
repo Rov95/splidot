@@ -4,4 +4,13 @@ server/.env
 # Ignore config.json file
 server/config/config.json
 
+# node
 node_modules
+
+server/node_modules
+
+# TypeScript build output
+server/dist
+
+#claude
+.claude
