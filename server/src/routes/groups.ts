@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
     const group = await Group.create({
       name,
       total_expense: 0,
-      created_by: req.session.userId,
+      created_by: req.userId,
     });
 
     for (const participantName of participants) {
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const groups = await Group.findAll({ where: { created_by: req.session.userId } });
+    const groups = await Group.findAll({ where: { created_by: req.userId } });
     res.json(groups);
   } catch (error) {
     res.status(500).json({ error: errorMessage(error) });
@@ -58,7 +58,7 @@ router.get('/:groupId/participants', async (req, res) => {
   const { groupId } = req.params;
 
   try {
-    const group = await findOwnedGroup(groupId, req.session.userId!);
+    const group = await findOwnedGroup(groupId, req.userId!);
     if (!group) {
       res.status(404).json({ error: 'Group not found' });
       return;
@@ -78,7 +78,7 @@ router.get('/:groupId/balances', async (req, res) => {
   const { groupId } = req.params;
 
   try {
-    const group = await findOwnedGroup(groupId, req.session.userId!);
+    const group = await findOwnedGroup(groupId, req.userId!);
     if (!group) {
       res.status(404).json({ error: 'Group not found' });
       return;
@@ -111,7 +111,7 @@ router.delete('/:groupId', async (req, res) => {
   const { groupId } = req.params;
 
   try {
-    const group = await findOwnedGroup(groupId, req.session.userId!);
+    const group = await findOwnedGroup(groupId, req.userId!);
     if (!group) {
       res.status(404).json({ error: 'Group not found' });
       return;

@@ -4,15 +4,17 @@ import type { Express } from 'express';
 
 let userCounter = 0;
 
-// Registering also starts a session, so the returned agent is authenticated.
+// Registering returns a JWT; set it as the agent's default Authorization header
+// so every subsequent request from the returned agent is authenticated.
 export const registerAgent = async (app: Express): Promise<TestAgent> => {
   const agent = request.agent(app);
-  await agent.post('/users/register').send({
+  const res = await agent.post('/users/register').send({
     email: `user-${++userCounter}@example.com`,
     password: 'correct-horse-battery-staple',
     firstName: 'Test',
     lastName: 'User',
   });
+  agent.set('Authorization', `Bearer ${res.body.token}`);
   return agent;
 };
 

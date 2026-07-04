@@ -1,4 +1,5 @@
 import type { Expense, Balance } from '../types';
+import { authHeaders } from './authService';
 
 const API_URL = 'http://localhost:3000/groups';
 
@@ -13,8 +14,7 @@ export const addExpense = async (groupId: string, expenseData: NewExpensePayload
     try {
         const response = await fetch(`${API_URL}/${groupId}/expenses`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
             body: JSON.stringify(expenseData),
         });
 
@@ -29,7 +29,7 @@ export const addExpense = async (groupId: string, expenseData: NewExpensePayload
 
 export const getGroupExpenses = async (groupId: string): Promise<Expense[]> => {
     try {
-        const response = await fetch(`${API_URL}/${groupId}/expenses`, { credentials: 'include' });
+        const response = await fetch(`${API_URL}/${groupId}/expenses`, { headers: authHeaders() });
         if (!response.ok) throw new Error('Failed to fetch expenses.');
         return await response.json();
     } catch (error) {
@@ -42,7 +42,7 @@ export const deleteExpense = async (groupId: string, expenseId: string): Promise
     try {
         const response = await fetch(`${API_URL}/${groupId}/expenses/${expenseId}`, {
             method: 'DELETE',
-            credentials: 'include',
+            headers: authHeaders(),
         });
         if (!response.ok) throw new Error('Failed to delete expense.');
     } catch (error) {
@@ -53,7 +53,7 @@ export const deleteExpense = async (groupId: string, expenseId: string): Promise
 
 export const getGroupBalances = async (groupId: string): Promise<Balance[]> => {
     try {
-        const response = await fetch(`${API_URL}/${groupId}/balances`, { credentials: 'include' });
+        const response = await fetch(`${API_URL}/${groupId}/balances`, { headers: authHeaders() });
         if (!response.ok) throw new Error('Failed to fetch balances.');
         return await response.json();
     } catch (error) {

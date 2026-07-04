@@ -1,4 +1,5 @@
 import type { Group } from '../types';
+import { authHeaders } from './authService';
 
 const API_URL = 'http://localhost:3000/groups';
 
@@ -16,8 +17,7 @@ export const createGroup = async (groupData: CreateGroupData): Promise<Group> =>
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
             body: JSON.stringify(groupData),
         });
 
@@ -26,7 +26,6 @@ export const createGroup = async (groupData: CreateGroupData): Promise<Group> =>
             console.error('Server response:', errorData);
             throw new Error('Failed to create group, please try again.');
         }
-        console.log(groupData)
 
         return await response.json();
     } catch (error) {
@@ -37,7 +36,7 @@ export const createGroup = async (groupData: CreateGroupData): Promise<Group> =>
 
 export const getGroups = async (): Promise<Group[]> => {
     try {
-        const response = await fetch(API_URL, { credentials: 'include' });
+        const response = await fetch(API_URL, { headers: authHeaders() });
         if (!response.ok) throw new Error('Failed to fetch groups.');
         return await response.json();
     } catch (error) {
@@ -50,7 +49,7 @@ export const deleteGroup = async (groupId: string): Promise<void> => {
     try {
         const response = await fetch(`${API_URL}/${groupId}`, {
             method: 'DELETE',
-            credentials: 'include',
+            headers: authHeaders(),
         });
         if (!response.ok) throw new Error('Failed to delete group.');
     } catch (error) {
@@ -61,7 +60,7 @@ export const deleteGroup = async (groupId: string): Promise<void> => {
 
 export const getGroupParticipants = async (groupId: string): Promise<Participant[]> => {
     try {
-        const response = await fetch(`${API_URL}/${groupId}/participants`, { credentials: 'include' });
+        const response = await fetch(`${API_URL}/${groupId}/participants`, { headers: authHeaders() });
         if (!response.ok) throw new Error('Failed to fetch participants.');
         return await response.json();
     } catch (error) {

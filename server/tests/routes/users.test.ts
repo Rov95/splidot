@@ -14,7 +14,7 @@ describe('POST /users/register', () => {
     const res = await request(app).post('/users/register').send(testUser);
 
     expect(res.status).toBe(201);
-    expect(res.body).toEqual({ message: 'User registered succesfully' });
+    expect(typeof res.body.token).toBe('string');
   });
 
   it('rejects a duplicate email', async () => {
@@ -35,8 +35,7 @@ describe('POST /users/login', () => {
       .send({ email: testUser.email, password: testUser.password });
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ message: 'User logged in successfully' });
-    expect(res.headers['set-cookie']).toBeDefined();
+    expect(typeof res.body.token).toBe('string');
   });
 
   it('rejects a wrong password', async () => {
@@ -61,17 +60,17 @@ describe('POST /users/login', () => {
 });
 
 describe('GET /users/me', () => {
-  it('requires an active session', async () => {
+  it('rejects a request without a token', async () => {
     const res = await request(app).get('/users/me');
 
     expect(res.status).toBe(401);
   });
 
   it('returns the logged-in user without the password field', async () => {
-    const agent = request.agent(app);
-    await agent.post('/users/register').send(testUser);
+    const registerRes = await request(app).post('/users/register').send(testUser);
+    const { token } = registerRes.body;
 
-    const res = await agent.get('/users/me');
+    const res = await request(app).get('/users/me').set('Authorization', `Bearer ${token}`);
 
     expect(res.status).toBe(200);
     expect(res.body.user.email).toBe(testUser.email);
@@ -80,15 +79,10 @@ describe('GET /users/me', () => {
 });
 
 describe('POST /users/logout', () => {
-  it('destroys the session so /me becomes unauthorized again', async () => {
-    const agent = request.agent(app);
-    await agent.post('/users/register').send(testUser);
-    await agent.get('/users/me').expect(200);
+  it('responds 200 (logout is client-side for stateless JWT)', async () => {
+    const res = await request(app).post('/users/logout');
 
-    const logoutRes = await agent.post('/users/logout');
-    expect(logoutRes.status).toBe(200);
-
-    const meRes = await agent.get('/users/me');
-    expect(meRes.status).toBe(401);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ message: 'Logged out successfully' });
   });
 });

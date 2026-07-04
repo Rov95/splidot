@@ -40,7 +40,7 @@ To run Splidot locally, you need:
      # Postgres connection string (e.g. from Neon)
      DATABASE_URL=postgresql://<user>:<password>@<host>/<dbname>?sslmode=require
 
-     # Secret used to sign session cookies
+     # Secret used to sign JWTs
      SECRET_KEY=<a-long-random-string>
      ```
 
@@ -121,7 +121,7 @@ The E2E suite uses your system-installed Google Chrome (`channel: 'chrome'` in `
 - **Framework:** Express for building the server and API
 - **Database:** PostgreSQL (hosted on Neon) for robust and scalable data management
 - **ORM:** Sequelize with typed models for managing database models and queries
-- **Authentication:** Session-based authentication for secure user sessions
+- **Authentication:** Stateless JWT (Bearer token, 90-day expiry) stored in `localStorage` on the client
 
 ---
 

@@ -2,6 +2,8 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import { User } from '../models';
 import { errorMessage } from '../utils/errors';
+import { signToken } from '../utils/jwt';
+import authMiddleware from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -22,8 +24,7 @@ router.post('/register', async (req, res) => {
       lastName,
     });
 
-    req.session.userId = newUser.user_id;
-    res.status(201).json({ message: 'User registered succesfully' });
+    res.status(201).json({ token: signToken(newUser.user_id) });
   } catch (error) {
     res.status(400).json({ error: errorMessage(error) });
   }
@@ -44,24 +45,15 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid email or password.' });
     }
 
-    req.session.userId = user.user_id;
-    req.session.save((err) => {
-      if (err) {
-        return res.status(500).json({ error: 'Failed to save session' });
-      }
-      res.status(200).json({ message: 'User logged in successfully' });
-    });
+    res.status(200).json({ token: signToken(user.user_id) });
   } catch (error) {
     res.status(400).json({ error: errorMessage(error) });
   }
 });
 
-router.get('/me', async (req, res) => {
+router.get('/me', authMiddleware, async (req, res) => {
   try {
-    if (!req.session.userId) {
-      return res.status(401).json({ error: 'You must be logged in to view your information' });
-    }
-    const user = await User.findByPk(req.session.userId, {
+    const user = await User.findByPk(req.userId, {
       attributes: { exclude: ['password'] },
     });
     if (!user) {
@@ -73,14 +65,10 @@ router.get('/me', async (req, res) => {
   }
 });
 
-router.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error logging out' });
-    }
-    res.clearCookie('rovix');
-    res.status(200).json({ message: 'Logged out successfully' });
-  });
+// JWTs are stateless, so logging out is a client-side concern (drop the token).
+// This endpoint stays for a stable client contract and is intentionally a no-op.
+router.post('/logout', (_req, res) => {
+  res.status(200).json({ message: 'Logged out successfully' });
 });
 
 export default router;

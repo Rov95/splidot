@@ -12,7 +12,7 @@ describe('SignUp', () => {
   });
 
   it('submits the form and toggles back to sign in on success', async () => {
-    vi.mocked(signUp).mockResolvedValue({ message: 'User registered succesfully' });
+    vi.mocked(signUp).mockResolvedValue({ token: 'jwt-123' });
     const toggleSignUp = vi.fn();
     const user = userEvent.setup();
 

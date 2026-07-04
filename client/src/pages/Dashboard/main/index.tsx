@@ -8,6 +8,7 @@ import LogoutButton from '../LogOut/logOut';
 import { getGroups, deleteGroup } from '../../../services/groupService';
 import { addExpense, deleteExpense, getGroupExpenses, getGroupBalances } from '../../../services/expenseService';
 import { getSettlements, createSettlements, markSettlementPaid } from '../../../services/settlementService';
+import { getToken } from '../../../services/authService';
 import type { SetIsSignedIn } from '../../../App';
 import type { Group, Participant, LocalExpense, Expense, Settlement } from '../../../types';
 import './styles.css'
@@ -30,6 +31,9 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
     const toggleExpenseModal = () => setShowExpenseModal(!showExpenseModal);
 
     const fetchGroups = async () => {
+        // Skip once signed out: a token-less request would just 401. This also
+        // avoids a stray fetch during the logout transition (token already cleared).
+        if (!getToken()) return;
         try {
             const data = await getGroups();
             setGroups(data);
@@ -43,6 +47,7 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
     }, []);
 
     const loadGroupData = async (groupId: string) => {
+        if (!getToken()) return;
         try {
             const [groupExpenses, groupBalances, groupSettlements] = await Promise.all([
                 getGroupExpenses(groupId),

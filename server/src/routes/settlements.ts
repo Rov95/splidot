@@ -22,7 +22,7 @@ groupSettlementsRouter.get('/', async (req, res) => {
   const { groupId } = req.params as { groupId: string };
 
   try {
-    const group = await findOwnedGroup(groupId, req.session.userId!);
+    const group = await findOwnedGroup(groupId, req.userId!);
     if (!group) {
       res.status(404).json({ error: 'Group not found' });
       return;
@@ -43,7 +43,7 @@ groupSettlementsRouter.post('/', async (req, res) => {
   const { groupId } = req.params as { groupId: string };
 
   try {
-    const group = await findOwnedGroup(groupId, req.session.userId!);
+    const group = await findOwnedGroup(groupId, req.userId!);
     if (!group) {
       res.status(404).json({ error: 'Group not found' });
       return;
@@ -92,7 +92,7 @@ settlementRouter.patch('/:settlementId', async (req, res) => {
   try {
     const settlement = await Settlement.findByPk(settlementId);
     const group = settlement
-      ? await findOwnedGroup(settlement.group_id, req.session.userId!)
+      ? await findOwnedGroup(settlement.group_id, req.userId!)
       : null;
     if (!settlement || !group) {
       res.status(404).json({ error: 'Settlement not found' });

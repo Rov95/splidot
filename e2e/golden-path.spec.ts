@@ -49,6 +49,13 @@ test.describe('Splidot golden path', () => {
     const groupItem = page.locator('.group-item', { hasText: TEST_GROUP_NAME });
     await expect(groupItem).toBeVisible();
 
+    // --- Reloading keeps us signed in (the JWT persists in localStorage) ---
+    // The group is server-side data, so seeing it again after a full reload proves
+    // the persisted token still authenticates us with no re-sign-in.
+    await page.reload();
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(groupItem).toBeVisible();
+
     // --- Select the group and load its participants ---
     await groupItem.click();
     await expect(page.locator('.participant-item')).toHaveCount(2);

@@ -1,9 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
+import { verifyToken } from '../utils/jwt';
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  if (req.session.userId) {
+  const header = req.headers.authorization;
+
+  if (!header || !header.startsWith('Bearer ')) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
+  try {
+    const { userId } = verifyToken(header.slice('Bearer '.length));
+    req.userId = userId;
     next();
-  } else {
+  } catch {
     res.status(401).json({ message: 'Unauthorized' });
   }
 };

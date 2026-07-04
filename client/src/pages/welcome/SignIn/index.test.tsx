@@ -24,7 +24,7 @@ describe('SignIn', () => {
   });
 
   it('signs in and redirects to the dashboard on success', async () => {
-    vi.mocked(signIn).mockResolvedValue({ message: 'User logged in successfully' });
+    vi.mocked(signIn).mockResolvedValue({ token: 'jwt-123' });
     const setIsSignedIn = vi.fn();
     const user = userEvent.setup();
 

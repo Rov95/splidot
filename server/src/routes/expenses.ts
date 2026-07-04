@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
   const { payer_id, amount, description, category } = req.body;
 
   try {
-    const group = await findOwnedGroup(groupId, req.session.userId!);
+    const group = await findOwnedGroup(groupId, req.userId!);
     if (!group) {
       res.status(404).json({ error: 'Group not found' });
       return;
@@ -68,7 +68,7 @@ router.get('/', async (req, res) => {
   const { groupId } = req.params as { groupId: string };
 
   try {
-    const group = await findOwnedGroup(groupId, req.session.userId!);
+    const group = await findOwnedGroup(groupId, req.userId!);
     if (!group) {
       res.status(404).json({ error: 'Group not found' });
       return;
@@ -89,7 +89,7 @@ router.delete('/:expenseId', async (req, res) => {
   const { groupId, expenseId } = req.params as { groupId: string; expenseId: string };
 
   try {
-    const group = await findOwnedGroup(groupId, req.session.userId!);
+    const group = await findOwnedGroup(groupId, req.userId!);
     if (!group) {
       res.status(404).json({ error: 'Group not found' });
       return;
