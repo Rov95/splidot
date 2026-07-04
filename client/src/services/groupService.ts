@@ -46,6 +46,19 @@ export const getGroups = async (): Promise<Group[]> => {
     }
 };
 
+export const deleteGroup = async (groupId: string): Promise<void> => {
+    try {
+        const response = await fetch(`${API_URL}/${groupId}`, {
+            method: 'DELETE',
+            credentials: 'include',
+        });
+        if (!response.ok) throw new Error('Failed to delete group.');
+    } catch (error) {
+        console.error('Error deleting group:', error);
+        throw error;
+    }
+};
+
 export const getGroupParticipants = async (groupId: string): Promise<Participant[]> => {
     try {
         const response = await fetch(`${API_URL}/${groupId}/participants`, { credentials: 'include' });

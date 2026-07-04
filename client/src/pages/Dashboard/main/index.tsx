@@ -5,8 +5,8 @@ import ParticipantList from '../ParticipantList/participantList';
 import AddExpense, { type NewExpenseData } from '../AddExpense/addExpense';
 import ExpenseList from '../ExpenseList/expenseList';
 import LogoutButton from '../LogOut/logOut';
-import { getGroups } from '../../../services/groupService';
-import { addExpense, getGroupExpenses, getGroupBalances } from '../../../services/expenseService';
+import { getGroups, deleteGroup } from '../../../services/groupService';
+import { addExpense, deleteExpense, getGroupExpenses, getGroupBalances } from '../../../services/expenseService';
 import { getSettlements, createSettlements, markSettlementPaid } from '../../../services/settlementService';
 import type { SetIsSignedIn } from '../../../App';
 import type { Group, Participant, LocalExpense, Expense, Settlement } from '../../../types';
@@ -78,6 +78,7 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
         participants.find((participant) => participant.user_id === userId)?.name ?? fallback ?? 'Unknown';
 
     const displayExpenses: LocalExpense[] = expenses.map((expense) => ({
+        expense_id: expense.expense_id,
         payerName: displayName(expense.user_id, expense.payer_name),
         amount: expense.amount,
         category: expense.category ?? '',
@@ -99,6 +100,35 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
             await loadGroupData(selectedGroupId);
         } catch (error) {
             console.error('Error adding expense:', error);
+        }
+    };
+
+    const handleDeleteExpense = async (expenseId: string) => {
+        if (!selectedGroupId) return;
+
+        try {
+            await deleteExpense(selectedGroupId, expenseId);
+            // Deleting an expense also wipes the group's unpaid settlements
+            // server-side, so reload everything in one shot.
+            await loadGroupData(selectedGroupId);
+        } catch (error) {
+            console.error('Error deleting expense:', error);
+        }
+    };
+
+    const handleDeleteGroup = async (groupId: string): Promise<boolean> => {
+        if (!window.confirm('Delete this group and all its expenses and settlements?')) {
+            return false;
+        }
+
+        try {
+            await deleteGroup(groupId);
+            setSelectedGroupId(null);
+            await fetchGroups();
+            return true;
+        } catch (error) {
+            console.error('Error deleting group:', error);
+            return false;
         }
     };
 
@@ -132,7 +162,7 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
                 {showModal && <GroupModal onClose={() => setShowModal(false)} onGroupCreated={handleGroupCreated} />}
 
                 <div className="group-manager">
-                    <GroupList groups={groups} onSelectGroup={setSelectedGroupId} />
+                    <GroupList groups={groups} onSelectGroup={setSelectedGroupId} onDeleteGroup={handleDeleteGroup} />
                     {selectedGroupId && (
                         <ParticipantList
                             groupId={selectedGroupId}
@@ -157,7 +187,7 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
                                 onClose={toggleExpenseModal}
                             />
                         )}
-                        <ExpenseList expenses={displayExpenses} />
+                        <ExpenseList expenses={displayExpenses} onDeleteExpense={handleDeleteExpense} />
                         <div className="total-paid">
                             <h3>Total Paid: ${totalPaid.toFixed(2)}</h3>
                         </div>

@@ -1,5 +1,5 @@
 import express from 'express';
-import { sequelize, Expense, ExpenseShare, UserGroup } from '../models';
+import { sequelize, Expense, ExpenseShare, Settlement, UserGroup } from '../models';
 import { errorMessage } from '../utils/errors';
 import { findOwnedGroup, participantNames } from '../utils/groups';
 import { centsFromAmount, splitEqualCents } from '../services/settlements';
@@ -80,6 +80,37 @@ router.get('/', async (req, res) => {
     ]);
     const names = participantNames(participants);
     res.json(expenses.map((expense) => toExpenseJson(expense, names)));
+  } catch (error) {
+    res.status(500).json({ error: errorMessage(error) });
+  }
+});
+
+router.delete('/:expenseId', async (req, res) => {
+  const { groupId, expenseId } = req.params as { groupId: string; expenseId: string };
+
+  try {
+    const group = await findOwnedGroup(groupId, req.session.userId!);
+    if (!group) {
+      res.status(404).json({ error: 'Group not found' });
+      return;
+    }
+
+    const expense = await Expense.findOne({ where: { expense_id: expenseId, group_id: groupId } });
+    if (!expense) {
+      res.status(404).json({ error: 'Expense not found' });
+      return;
+    }
+
+    await sequelize.transaction(async (transaction) => {
+      await ExpenseShare.destroy({ where: { expense_id: expenseId }, transaction });
+      await expense.destroy({ transaction });
+      await group.decrement('total_expense', { by: Number(expense.amount), transaction });
+      // Outstanding debts were computed from an expense set that no longer
+      // exists; paid settlements are history of real transfers and stay.
+      await Settlement.destroy({ where: { group_id: groupId, is_paid: false }, transaction });
+    });
+
+    res.status(204).end();
   } catch (error) {
     res.status(500).json({ error: errorMessage(error) });
   }

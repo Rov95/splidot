@@ -52,3 +52,20 @@
     color: #916622;
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
+
+.delete-group-btn {
+    display: block;
+    margin: 10px auto 0;
+    background-color: #ffa3a3;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 15px;
+    font-size: 0.7em;
+    color: #5c1a1a;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.delete-group-btn:hover {
+    background-color: #ff7b7b;
+}

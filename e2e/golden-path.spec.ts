@@ -10,6 +10,9 @@ test.describe('Splidot golden path', () => {
     const pageErrors: string[] = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
 
+    // Accept the confirm() shown when deleting a group.
+    page.on('dialog', (dialog) => dialog.accept());
+
     const email = `${TEST_EMAIL_PREFIX}${Date.now()}@example.com`;
     const password = 'TestPassword123!';
 
@@ -67,6 +70,18 @@ test.describe('Splidot golden path', () => {
     await page.locator('.splidot-button').click();
     await expect(page.locator('.settlements-display')).toBeVisible();
     await expect(page.getByText(/pays .*: \$20\.00/)).toBeVisible();
+
+    // --- Delete the expense ---
+    // Server-side this also wipes the (unpaid) settlement, so the display disappears.
+    await page.locator('.delete-expense-btn').click();
+    await expect(page.locator('.expense-list li')).toHaveCount(0);
+    await expect(page.getByText('Total Paid: $0.00')).toBeVisible();
+    await expect(page.locator('.settlements-display')).toHaveCount(0);
+
+    // --- Delete the group ---
+    await page.locator('.delete-group-btn').click();
+    await expect(page.locator('.group-item', { hasText: TEST_GROUP_NAME })).toHaveCount(0);
+    await expect(page.getByText('Groups')).toBeVisible();
 
     // --- Log out ---
     await page.locator('.logout-button').click();

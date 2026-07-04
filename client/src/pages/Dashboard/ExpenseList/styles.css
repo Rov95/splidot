@@ -45,6 +45,21 @@
     color: #1b0808;
 }
 
+.delete-expense-btn {
+    background: none;
+    border: none;
+    color: #7a1f1f;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-expense-btn:hover {
+    background-color: #f5c6c6;
+}
+
 .expense-list li::before {
     content: '•';
     color: #085937c7;

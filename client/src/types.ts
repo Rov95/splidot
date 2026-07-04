@@ -12,6 +12,7 @@ export interface Participant {
 }
 
 export interface LocalExpense {
+  expense_id: string;
   payerName: string;
   amount: number;
   category: string;

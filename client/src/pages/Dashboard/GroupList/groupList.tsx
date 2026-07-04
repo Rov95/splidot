@@ -5,9 +5,10 @@ import './styles.css'
 interface GroupListProps {
     groups: Group[];
     onSelectGroup: (groupId: string) => void;
+    onDeleteGroup: (groupId: string) => Promise<boolean>;
 }
 
-const GroupList = ({ groups, onSelectGroup }: GroupListProps) => {
+const GroupList = ({ groups, onSelectGroup, onDeleteGroup }: GroupListProps) => {
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [showAllGroups, setShowAllGroups] = useState(true);
 
@@ -46,6 +47,19 @@ const GroupList = ({ groups, onSelectGroup }: GroupListProps) => {
                     selectedGroup && (
                         <li className="group-item-selected">
                             {selectedGroup.name}
+                            <button
+                                className="delete-group-btn"
+                                onClick={async (e) => {
+                                    e.stopPropagation(); // Prevent parent div click
+                                    const deleted = await onDeleteGroup(selectedGroup.group_id);
+                                    if (deleted) {
+                                        setSelectedGroup(null);
+                                        setShowAllGroups(true);
+                                    }
+                                }}
+                            >
+                                Delete Group
+                            </button>
                         </li>
                     )
                 )}

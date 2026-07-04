@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import { app } from '../../src/app';
 import { registerAgent, createGroup } from '../helpers';
-import { ExpenseShare, Group } from '../../src/models';
+import { Expense, ExpenseShare, Group, Settlement } from '../../src/models';
 
 describe('POST /groups/:groupId/expenses', () => {
   it('requires an active session', async () => {
@@ -147,5 +147,119 @@ describe('GET /groups/:groupId/expenses', () => {
     const res = await intruder.get(`/groups/${group.group_id}/expenses`);
 
     expect(res.status).toBe(404);
+  });
+});
+
+describe('DELETE /groups/:groupId/expenses/:expenseId', () => {
+  it('requires an active session', async () => {
+    const res = await request(app).delete('/groups/some-id/expenses/some-expense');
+
+    expect(res.status).toBe(401);
+  });
+
+  it('removes the expense with its shares and restores the group total', async () => {
+    const agent = await registerAgent(app);
+    const { group, participants } = await createGroup(agent, 'Trip', ['Alice', 'Bob']);
+
+    const created = await agent.post(`/groups/${group.group_id}/expenses`).send({
+      payer_id: participants[0].user_id,
+      amount: 40,
+      description: 'Dinner',
+      category: 'food',
+    });
+
+    const res = await agent.delete(`/groups/${group.group_id}/expenses/${created.body.expense_id}`);
+
+    expect(res.status).toBe(204);
+    expect(await Expense.findByPk(created.body.expense_id)).toBeNull();
+    expect(await ExpenseShare.findAll({ where: { expense_id: created.body.expense_id } })).toHaveLength(0);
+
+    const updatedGroup = await Group.findByPk(group.group_id);
+    expect(Number(updatedGroup!.total_expense)).toBe(0);
+
+    const listRes = await agent.get(`/groups/${group.group_id}/expenses`);
+    expect(listRes.body).toHaveLength(0);
+  });
+
+  it('wipes unpaid settlements but keeps paid ones', async () => {
+    const agent = await registerAgent(app);
+    const { group, participants } = await createGroup(agent, 'Trip', ['Alice', 'Bob']);
+    const [alice, bob] = participants;
+
+    // Alice pays 40 → Bob owes 20; settle and mark it paid.
+    await agent.post(`/groups/${group.group_id}/expenses`).send({
+      payer_id: alice.user_id,
+      amount: 40,
+      description: 'Dinner',
+      category: 'food',
+    });
+    const settled = await agent.post(`/groups/${group.group_id}/settlements`);
+    await agent.patch(`/settlements/${settled.body[0].settlement_id}`).send({ is_paid: true });
+
+    // A second expense creates a fresh unpaid settlement...
+    const second = await agent.post(`/groups/${group.group_id}/expenses`).send({
+      payer_id: bob.user_id,
+      amount: 10,
+      description: 'Taxi',
+      category: 'transport',
+    });
+    await agent.post(`/groups/${group.group_id}/settlements`);
+
+    // ...which deleting that expense invalidates.
+    const res = await agent.delete(`/groups/${group.group_id}/expenses/${second.body.expense_id}`);
+
+    expect(res.status).toBe(204);
+    const remaining = await Settlement.findAll({ where: { group_id: group.group_id } });
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0].is_paid).toBe(true);
+  });
+
+  it("404s for another user's group", async () => {
+    const owner = await registerAgent(app);
+    const { group, participants } = await createGroup(owner, 'Trip', ['Alice']);
+    const created = await owner.post(`/groups/${group.group_id}/expenses`).send({
+      payer_id: participants[0].user_id,
+      amount: 10,
+      description: 'Dinner',
+      category: 'food',
+    });
+
+    const intruder = await registerAgent(app);
+    const res = await intruder.delete(`/groups/${group.group_id}/expenses/${created.body.expense_id}`);
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Group not found');
+    expect(await Expense.findByPk(created.body.expense_id)).not.toBeNull();
+  });
+
+  it('404s for an unknown expense id', async () => {
+    const agent = await registerAgent(app);
+    const { group } = await createGroup(agent, 'Trip', ['Alice']);
+
+    const res = await agent.delete(
+      `/groups/${group.group_id}/expenses/00000000-0000-4000-8000-000000000000`
+    );
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Expense not found');
+  });
+
+  it("404s for an expense that belongs to the user's other group", async () => {
+    const agent = await registerAgent(app);
+    const { group, participants } = await createGroup(agent, 'Trip', ['Alice']);
+    const { group: otherGroup } = await createGroup(agent, 'Rent', ['Sam']);
+
+    const created = await agent.post(`/groups/${group.group_id}/expenses`).send({
+      payer_id: participants[0].user_id,
+      amount: 10,
+      description: 'Dinner',
+      category: 'food',
+    });
+
+    const res = await agent.delete(`/groups/${otherGroup.group_id}/expenses/${created.body.expense_id}`);
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Expense not found');
+    expect(await Expense.findByPk(created.body.expense_id)).not.toBeNull();
   });
 });

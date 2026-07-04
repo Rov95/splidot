@@ -38,6 +38,19 @@ export const getGroupExpenses = async (groupId: string): Promise<Expense[]> => {
     }
 };
 
+export const deleteExpense = async (groupId: string, expenseId: string): Promise<void> => {
+    try {
+        const response = await fetch(`${API_URL}/${groupId}/expenses/${expenseId}`, {
+            method: 'DELETE',
+            credentials: 'include',
+        });
+        if (!response.ok) throw new Error('Failed to delete expense.');
+    } catch (error) {
+        console.error('Error deleting expense:', error);
+        throw error;
+    }
+};
+
 export const getGroupBalances = async (groupId: string): Promise<Balance[]> => {
     try {
         const response = await fetch(`${API_URL}/${groupId}/balances`, { credentials: 'include' });

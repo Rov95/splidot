@@ -1,6 +1,6 @@
 import express from 'express';
 import { v4 as uuid4 } from 'uuid';
-import { Group, UserGroup, Expense } from '../models';
+import { sequelize, Group, UserGroup, Expense, ExpenseShare, Settlement } from '../models';
 import { errorMessage } from '../utils/errors';
 import { findOwnedGroup } from '../utils/groups';
 import groupExpensesRouter from './expenses';
@@ -102,6 +102,39 @@ router.get('/:groupId/balances', async (req, res) => {
         total_paid: (paidCents.get(participant.user_id) ?? 0) / 100,
       }))
     );
+  } catch (error) {
+    res.status(500).json({ error: errorMessage(error) });
+  }
+});
+
+router.delete('/:groupId', async (req, res) => {
+  const { groupId } = req.params;
+
+  try {
+    const group = await findOwnedGroup(groupId, req.session.userId!);
+    if (!group) {
+      res.status(404).json({ error: 'Group not found' });
+      return;
+    }
+
+    // Children first: ExpenseShares → Settlements/Expenses → UserGroups → Group.
+    await sequelize.transaction(async (transaction) => {
+      const expenses = await Expense.findAll({
+        where: { group_id: groupId },
+        attributes: ['expense_id'],
+        transaction,
+      });
+      await ExpenseShare.destroy({
+        where: { expense_id: expenses.map((expense) => expense.expense_id) },
+        transaction,
+      });
+      await Settlement.destroy({ where: { group_id: groupId }, transaction });
+      await Expense.destroy({ where: { group_id: groupId }, transaction });
+      await UserGroup.destroy({ where: { group_id: groupId }, transaction });
+      await group.destroy({ transaction });
+    });
+
+    res.status(204).end();
   } catch (error) {
     res.status(500).json({ error: errorMessage(error) });
   }
