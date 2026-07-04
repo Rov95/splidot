@@ -1,17 +1,25 @@
 import { Sequelize } from 'sequelize';
 
-const { DATABASE_URL } = process.env;
+const { DATABASE_URL, NODE_ENV } = process.env;
 
-if (!DATABASE_URL) {
-  throw new Error('DATABASE_URL is missing from environment variables');
-}
+const createSequelize = (): Sequelize => {
+  if (NODE_ENV === 'test') {
+    return new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false });
+  }
 
-export const sequelize = new Sequelize(DATABASE_URL, {
-  dialect: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
+  if (!DATABASE_URL) {
+    throw new Error('DATABASE_URL is missing from environment variables');
+  }
+
+  return new Sequelize(DATABASE_URL, {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
-  },
-});
+  });
+};
+
+export const sequelize = createSequelize();

@@ -12,5 +12,9 @@ server/node_modules
 # TypeScript build output
 server/dist
 
+# Playwright
+playwright-report
+test-results
+
 #claude
 .claude

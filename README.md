@@ -13,6 +13,7 @@ To run Splidot locally, you need:
 - Node.js (v18+ recommended)
 - A PostgreSQL database (a free [Neon](https://neon.tech) database works out of the box)
 - A package manager like npm or yarn
+- Google Chrome installed (only needed to run the end-to-end tests — see [Testing](#testing))
 
 ### Installation
 
@@ -67,12 +68,51 @@ To run Splidot locally, you need:
 | `npm run dev` | Run the server in watch mode with `tsx` |
 | `npm run build` | Compile TypeScript to `dist/` |
 | `npm start` | Run the compiled server from `dist/` |
+| `npm test` | Run the Vitest test suite once |
+| `npm run test:watch` | Run the Vitest test suite in watch mode |
+
+### Frontend scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Run the Vite dev server with hot reload |
+| `npm run typecheck` | Type-check with `tsc --noEmit` |
+| `npm run build` | Type-check, then build for production into `dist/` |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Preview the production build locally |
+| `npm test` | Run the Vitest test suite once |
+| `npm run test:watch` | Run the Vitest test suite in watch mode |
+
+---
+
+## Testing
+
+Splidot has three layers of automated tests:
+
+| Layer | Location | Framework | What it covers |
+| --- | --- | --- | --- |
+| Backend unit/integration | `server/tests` | Vitest + Supertest | Route handlers (`/users`, `/groups`, `/expenses`, `/categories`) against an in-memory SQLite database, plus the `errorMessage` util and `authMiddleware` |
+| Frontend unit/component | `client/src/**/*.test.tsx` | Vitest + React Testing Library | Forms, dashboard components, and the pure `calculateSettlements` splitting algorithm, with services mocked |
+| End-to-end | `e2e/` (repo root) | Playwright | Full golden path in a real browser against the real dev servers and Neon database: sign up → sign in → create group → add expense → settle up → log out |
+
+Backend tests never touch the real Neon database — `server/src/config/database.ts` switches to an in-memory SQLite instance whenever `NODE_ENV=test` (set automatically by Vitest). The E2E suite does use the real Neon database (via the dev servers) but cleans up everything it creates before and after each run.
+
+Run each suite from its own directory:
+
+```bash
+cd server && npm test      # backend tests
+cd client && npm test      # frontend tests
+npm run test:e2e           # from the repo root — starts both dev servers automatically
+```
+
+The E2E suite uses your system-installed Google Chrome (`channel: 'chrome'` in `playwright.config.ts`) instead of downloading a bundled Chromium, so no browser download is required.
 
 ---
 
 ## Tech Stack
 
 ### Frontend
+- **Language:** TypeScript (strict mode)
 - **Framework:** React with Vite for fast development and build performance
 - **Styling:** CSS for responsive and modern design
 
