@@ -12,6 +12,21 @@ export async function cleanupTestData(): Promise<void> {
 
   await client.connect();
   try {
+    // Children first: ExpenseShares → Settlements/Expenses → UserGroups → Groups.
+    await client.query(
+      `DELETE FROM "ExpenseShares" WHERE expense_id IN (
+         SELECT expense_id FROM "Expenses" WHERE group_id IN (SELECT group_id FROM "Groups" WHERE name = $1)
+       )`,
+      [TEST_GROUP_NAME]
+    );
+    await client.query(
+      `DELETE FROM "Settlements" WHERE group_id IN (SELECT group_id FROM "Groups" WHERE name = $1)`,
+      [TEST_GROUP_NAME]
+    );
+    await client.query(
+      `DELETE FROM "Expenses" WHERE group_id IN (SELECT group_id FROM "Groups" WHERE name = $1)`,
+      [TEST_GROUP_NAME]
+    );
     await client.query(
       `DELETE FROM "UserGroups" WHERE group_id IN (SELECT group_id FROM "Groups" WHERE name = $1)`,
       [TEST_GROUP_NAME]

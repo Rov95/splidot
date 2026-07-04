@@ -5,8 +5,8 @@ import AddExpense from './addExpense';
 import type { Participant } from '../../../types';
 
 const participants: Participant[] = [
-  { user_id: 'a', name: 'Alice', totalPaid: 0, icon: '/cat1.svg' },
-  { user_id: 'b', name: 'Bob', totalPaid: 0, icon: '/cat2.svg' },
+  { user_id: 'a', name: 'Alice', icon: '/cat1.svg' },
+  { user_id: 'b', name: 'Bob', icon: '/cat2.svg' },
 ];
 
 describe('AddExpense', () => {

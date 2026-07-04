@@ -2,7 +2,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import cors from 'cors';
-import { userRouter, groupRouter, expenseRouter, categoryRouter } from './router';
+import { userRouter, groupRouter, settlementRouter } from './router';
+import authMiddleware from './middlewares/auth';
 
 if (!process.env.SECRET_KEY) {
   throw new Error('SECRET_KEY is missing from environment variables');
@@ -35,6 +36,5 @@ app.use(
 );
 
 app.use('/users', userRouter);
-app.use('/groups', groupRouter);
-app.use('/expenses', expenseRouter);
-app.use('/categories', categoryRouter);
+app.use('/groups', authMiddleware, groupRouter);
+app.use('/settlements', authMiddleware, settlementRouter);

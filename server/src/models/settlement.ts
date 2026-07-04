@@ -8,20 +8,23 @@ import {
 } from 'sequelize';
 import { v4 as uuid4 } from 'uuid';
 
-export class Expense extends Model<InferAttributes<Expense>, InferCreationAttributes<Expense>> {
-  declare expense_id: CreationOptional<string>;
+export class Settlement extends Model<
+  InferAttributes<Settlement>,
+  InferCreationAttributes<Settlement>
+> {
+  declare settlement_id: CreationOptional<string>;
   declare group_id: string;
-  declare user_id: string;
+  declare from_user_id: string;
+  declare to_user_id: string;
   declare amount: number | string;
-  declare description: CreationOptional<string | null>;
-  declare category: CreationOptional<string | null>;
+  declare is_paid: CreationOptional<boolean>;
   declare created_at: CreationOptional<Date>;
 }
 
-export const initExpense = (sequelize: Sequelize): typeof Expense => {
-  Expense.init(
+export const initSettlement = (sequelize: Sequelize): typeof Settlement => {
+  Settlement.init(
     {
-      expense_id: {
+      settlement_id: {
         type: DataTypes.UUID,
         defaultValue: () => uuid4(),
         primaryKey: true,
@@ -31,7 +34,11 @@ export const initExpense = (sequelize: Sequelize): typeof Expense => {
         allowNull: false,
         references: { model: 'Groups', key: 'group_id' },
       },
-      user_id: {
+      from_user_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      to_user_id: {
         type: DataTypes.UUID,
         allowNull: false,
       },
@@ -39,13 +46,10 @@ export const initExpense = (sequelize: Sequelize): typeof Expense => {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
-      description: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      category: {
-        type: DataTypes.STRING,
-        allowNull: true,
+      is_paid: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       created_at: {
         type: DataTypes.DATE,
@@ -54,9 +58,9 @@ export const initExpense = (sequelize: Sequelize): typeof Expense => {
     },
     {
       sequelize,
-      modelName: 'Expense',
+      modelName: 'Settlement',
       timestamps: false,
     }
   );
-  return Expense;
+  return Settlement;
 };

@@ -12,6 +12,7 @@ export class Group extends Model<InferAttributes<Group>, InferCreationAttributes
   declare group_id: CreationOptional<string>;
   declare name: string | null;
   declare total_expense: CreationOptional<number | string>;
+  declare created_by: CreationOptional<string | null>;
   declare created_at: CreationOptional<Date>;
 }
 
@@ -27,6 +28,10 @@ export const initGroup = (sequelize: Sequelize): typeof Group => {
       total_expense: {
         type: DataTypes.DECIMAL,
         defaultValue: 0,
+      },
+      created_by: {
+        type: DataTypes.UUID,
+        allowNull: true,
       },
       created_at: {
         type: DataTypes.DATE,

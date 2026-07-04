@@ -8,7 +8,6 @@ export interface Group {
 export interface Participant {
   user_id: string;
   name: string | null;
-  totalPaid: number;
   icon: string;
 }
 
@@ -19,8 +18,31 @@ export interface LocalExpense {
   expenseName: string;
 }
 
-export interface Settlement {
-  from: string | null;
-  to: string | null;
+export interface Expense {
+  expense_id: string;
+  group_id: string;
+  user_id: string;
+  payer_name: string | null;
   amount: number;
+  description: string | null;
+  category: string | null;
+  created_at: string;
+}
+
+export interface Balance {
+  user_id: string;
+  name: string | null;
+  total_paid: number;
+}
+
+export interface Settlement {
+  settlement_id: string;
+  group_id: string;
+  from_user_id: string;
+  from_name: string | null;
+  to_user_id: string;
+  to_name: string | null;
+  amount: number;
+  is_paid: boolean;
+  created_at: string;
 }

@@ -8,9 +8,10 @@ interface ParticipantListProps {
     groupId: string | null;
     participants: Participant[];
     setParticipants: Dispatch<SetStateAction<Participant[]>>;
+    balances: Record<string, number>;
 }
 
-const ParticipantList = ({ groupId, participants, setParticipants }: ParticipantListProps) => {
+const ParticipantList = ({ groupId, participants, setParticipants, balances }: ParticipantListProps) => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -23,7 +24,6 @@ const ParticipantList = ({ groupId, participants, setParticipants }: Participant
                 const initialParticipants: Participant[] = data.map((participant, index) => ({
                     ...participant,
                     name: index === 0 ? 'Me' : participant.name, // Set first participant as 'Me'
-                    totalPaid: 0,
                     icon: `/cat${(index % 6) + 1}.svg` // Assign icons cyclically from cat1.svg to cat6.svg
                 }));
 
@@ -46,7 +46,7 @@ const ParticipantList = ({ groupId, participants, setParticipants }: Participant
                     {participants.map((participant) => (
                         <li key={participant.user_id} className="participant-item">
                             <img src={participant.icon} alt="Participant icon" className="participant-icon" />
-                            {participant.name} / Share: ${participant.totalPaid}
+                            {participant.name} / Share: ${balances[participant.user_id] ?? 0}
                         </li>
                     ))}
                 </ul>

@@ -6,9 +6,10 @@ import AddExpense, { type NewExpenseData } from '../AddExpense/addExpense';
 import ExpenseList from '../ExpenseList/expenseList';
 import LogoutButton from '../LogOut/logOut';
 import { getGroups } from '../../../services/groupService';
-import { calculateSettlements } from '../../../utils/settlements';
+import { addExpense, getGroupExpenses, getGroupBalances } from '../../../services/expenseService';
+import { getSettlements, createSettlements, markSettlementPaid } from '../../../services/settlementService';
 import type { SetIsSignedIn } from '../../../App';
-import type { Group, Participant, LocalExpense, Settlement } from '../../../types';
+import type { Group, Participant, LocalExpense, Expense, Settlement } from '../../../types';
 import './styles.css'
 
 interface DashboardProps {
@@ -21,10 +22,9 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
     const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
     const [participants, setParticipants] = useState<Participant[]>([]);
-    const [expenses, setExpenses] = useState<LocalExpense[]>([]);
-    const [totalPaid, setTotalPaid] = useState(0);
+    const [expenses, setExpenses] = useState<Expense[]>([]);
+    const [balances, setBalances] = useState<Record<string, number>>({});
     const [settlements, setSettlements] = useState<Settlement[]>([]);
-    const [payedSettlements, setPayedSettlements] = useState<Set<number>>(new Set());
 
     const toggleModal = () => setShowModal(!showModal);
     const toggleExpenseModal = () => setShowExpenseModal(!showExpenseModal);
@@ -42,37 +42,87 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
         fetchGroups();
     }, []);
 
+    const loadGroupData = async (groupId: string) => {
+        try {
+            const [groupExpenses, groupBalances, groupSettlements] = await Promise.all([
+                getGroupExpenses(groupId),
+                getGroupBalances(groupId),
+                getSettlements(groupId),
+            ]);
+            setExpenses(groupExpenses);
+            setBalances(Object.fromEntries(groupBalances.map((balance) => [balance.user_id, balance.total_paid])));
+            setSettlements(groupSettlements);
+        } catch (error) {
+            console.error('Error loading group data:', error);
+        }
+    };
+
+    useEffect(() => {
+        setExpenses([]);
+        setBalances({});
+        setSettlements([]);
+        if (selectedGroupId) {
+            loadGroupData(selectedGroupId);
+        }
+    }, [selectedGroupId]);
+
     const handleGroupCreated = async () => {
         await fetchGroups();
         setShowModal(false);
     };
 
-    const handleAddExpense = ({ payer, amount, category, expenseName }: NewExpenseData) => {
-        setParticipants(prevParticipants =>
-            prevParticipants.map(participant =>
-                participant.user_id === payer
-                    ? { ...participant, totalPaid: (participant.totalPaid || 0) + amount }
-                    : participant
-            )
-        );
+    // Participant names come from the server, but the first participant is renamed
+    // to 'Me' client-side (in ParticipantList), so display names are resolved
+    // against the local participant list first.
+    const displayName = (userId: string, fallback: string | null) =>
+        participants.find((participant) => participant.user_id === userId)?.name ?? fallback ?? 'Unknown';
 
-        // Adding the new expense to the expense list
-        const payerName = participants.find(participant => participant.user_id === payer)?.name || 'Unknown';
-        setExpenses(prevExpenses => [
-            ...prevExpenses,
-            { payerName, amount, category, expenseName }
-        ]);
+    const displayExpenses: LocalExpense[] = expenses.map((expense) => ({
+        payerName: displayName(expense.user_id, expense.payer_name),
+        amount: expense.amount,
+        category: expense.category ?? '',
+        expenseName: expense.description ?? '',
+    }));
 
-        // Updating the general total paid
-        setTotalPaid(prevTotal => prevTotal + amount);
+    const totalPaid = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+    const handleAddExpense = async ({ payer, amount, category, expenseName }: NewExpenseData) => {
+        if (!selectedGroupId) return;
+
+        try {
+            await addExpense(selectedGroupId, {
+                payer_id: payer,
+                amount,
+                description: expenseName,
+                category,
+            });
+            await loadGroupData(selectedGroupId);
+        } catch (error) {
+            console.error('Error adding expense:', error);
+        }
     };
 
-    const handleCalculateSettlements = () => {
-        setSettlements(calculateSettlements(participants, totalPaid));
+    const handleCalculateSettlements = async () => {
+        if (!selectedGroupId) return;
+
+        try {
+            setSettlements(await createSettlements(selectedGroupId));
+        } catch (error) {
+            console.error('Error calculating settlements:', error);
+        }
     };
 
-    const handleMarkAsPayed = (index: number) => {
-        setPayedSettlements((prevSet) => new Set(prevSet).add(index)); // Add index to payed set
+    const handleMarkAsPayed = async (settlementId: string) => {
+        try {
+            const updated = await markSettlementPaid(settlementId);
+            setSettlements((prevSettlements) =>
+                prevSettlements.map((settlement) =>
+                    settlement.settlement_id === updated.settlement_id ? updated : settlement
+                )
+            );
+        } catch (error) {
+            console.error('Error marking settlement as paid:', error);
+        }
     };
 
     return (
@@ -88,6 +138,7 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
                             groupId={selectedGroupId}
                             participants={participants}
                             setParticipants={setParticipants}
+                            balances={balances}
                         />
                     )}
                 </div>
@@ -106,7 +157,7 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
                                 onClose={toggleExpenseModal}
                             />
                         )}
-                        <ExpenseList expenses={expenses} />
+                        <ExpenseList expenses={displayExpenses} />
                         <div className="total-paid">
                             <h3>Total Paid: ${totalPaid.toFixed(2)}</h3>
                         </div>
@@ -123,18 +174,18 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
                     <div className="settlements-display">
                         <h3>Dot says:</h3>
                         <ul>
-                            {settlements.map((settlement, index) => (
-                                <li key={index} className="settlement-item">
+                            {settlements.map((settlement) => (
+                                <li key={settlement.settlement_id} className="settlement-item">
                                     <span>
-                                        {settlement.from} pays {settlement.to}: ${settlement.amount.toFixed(2)}
+                                        {displayName(settlement.from_user_id, settlement.from_name)} pays {displayName(settlement.to_user_id, settlement.to_name)}: ${settlement.amount.toFixed(2)}
                                     </span>
 
-                                    {payedSettlements.has(index) ? (
+                                    {settlement.is_paid ? (
                                         <img src="/check.svg" alt="check icon" className="status-icon" />
                                     ) : (
                                         <>
                                             <button
-                                                onClick={() => handleMarkAsPayed(index)}
+                                                onClick={() => handleMarkAsPayed(settlement.settlement_id)}
                                                 className="payed-button">
                                                 Paid off
                                             </button>
