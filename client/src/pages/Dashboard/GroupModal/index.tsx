@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { createGroup } from '../../../services/groupService';
-import './styles.css'
+// @ts-ignore: allow side-effect import for styles
+import './styles.css';
 
 interface GroupModalProps {
     onClose: () => void;

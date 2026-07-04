@@ -17,9 +17,13 @@
     padding: 25px;
     max-width: 450px;
     width: 100%;
+    max-height: 85vh;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     position: relative;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .modal-title {
@@ -27,6 +31,7 @@
     color: #4b6584;
     margin-bottom: 15px;
     font-weight: 700;
+    flex-shrink: 0;
 }
 
 /* Form */
@@ -34,7 +39,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-} 
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding-right: 6px;
+}
 
 .input-label {
     color: #4b6584;

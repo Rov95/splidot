@@ -1,6 +1,7 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { getGroupParticipants } from '../../../services/groupService';
 import type { Participant } from '../../../types';
+// @ts-ignore: allow side-effect import for styles
 import './styles.css';
 
 interface ParticipantListProps {

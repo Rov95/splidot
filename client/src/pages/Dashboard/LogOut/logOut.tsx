@@ -1,5 +1,6 @@
 import { signOut } from '../../../services/authService';
 import type { SetIsSignedIn } from '../../../App';
+// @ts-ignore: allow side-effect import for styles
 import './styles.css';
 
 interface LogoutButtonProps {
