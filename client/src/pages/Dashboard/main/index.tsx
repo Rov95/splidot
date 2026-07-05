@@ -6,6 +6,7 @@ import AddExpense, { type NewExpenseData } from '../AddExpense/addExpense';
 import ExpenseList from '../ExpenseList/expenseList';
 import CategoryBreakdown from '../CategoryBreakdown/categoryBreakdown';
 import Settlements from '../Settlements/settlements';
+import ParticipantShare from '../ParticipantShare/participantShare';
 import LogoutButton from '../LogOut/logOut';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
@@ -365,6 +366,10 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
                                     />
                                 </Card>
                             </div>
+
+                            <Card title="Share by participant" className="dashboard__share-card">
+                                <ParticipantShare participants={participants} balances={balances} />
+                            </Card>
                         </>
                     )}
                 </main>
