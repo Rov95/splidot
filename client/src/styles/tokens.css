@@ -1,0 +1,75 @@
+/* Design tokens — single source of truth for the Splidot UI.
+   Palette anchored on the public SVG assets:
+   #0B2E34 = leafs.svg base, #94B2B2 = check/cross tiles, #2A9D8F = brand accent. */
+:root {
+  /* Raw palette */
+  --teal-950: #06181c;
+  --teal-900: #0b2e34;
+  --teal-800: #11414a;
+  --teal-700: #17555f;
+  --teal-600: #21867a;
+  --teal-500: #2a9d8f;
+  --teal-300: #94b2b2;
+  --teal-100: #dce9e9;
+  --teal-50: #f2f7f7;
+  --coral-500: #e76f51;
+  --coral-600: #d0573a;
+  --green-500: #3fa97c;
+  --amber-400: #e9c46a;
+
+  /* Semantic colors */
+  --color-bg: var(--teal-900);
+  --color-surface: rgba(6, 24, 28, 0.72);
+  --color-surface-solid: #0e353c;
+  --color-surface-hover: rgba(148, 178, 178, 0.08);
+  --color-border: rgba(148, 178, 178, 0.18);
+  --color-text: var(--teal-50);
+  --color-text-muted: var(--teal-300);
+  --color-accent: var(--teal-500);
+  --color-accent-hover: var(--teal-600);
+  --color-danger: var(--coral-500);
+  --color-danger-hover: var(--coral-600);
+  --color-success: var(--green-500);
+  --color-warning: var(--amber-400);
+  --color-input-bg: rgba(242, 247, 247, 0.06);
+
+  /* Spacing — 4px scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --focus-ring: 0 0 0 3px rgba(42, 157, 143, 0.45);
+
+  /* Motion & layers */
+  --transition-fast: 150ms ease;
+  --z-modal: 1000;
+  --z-toast: 1100;
+
+  /* Typography */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+}
+
+/* Breakpoints (CSS variables can't be used inside @media — hardcode these):
+   tablet ≥ 640px, desktop ≥ 1024px */

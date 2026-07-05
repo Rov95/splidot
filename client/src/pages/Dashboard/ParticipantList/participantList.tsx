@@ -1,7 +1,6 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { getGroupParticipants } from '../../../services/groupService';
 import type { Participant } from '../../../types';
-// @ts-ignore: allow side-effect import for styles
 import './styles.css';
 
 interface ParticipantListProps {
@@ -9,9 +8,10 @@ interface ParticipantListProps {
     participants: Participant[];
     setParticipants: Dispatch<SetStateAction<Participant[]>>;
     balances: Record<string, number>;
+    onSelectParticipant?: (participantId: string) => void;
 }
 
-const ParticipantList = ({ groupId, participants, setParticipants, balances }: ParticipantListProps) => {
+const ParticipantList = ({ groupId, participants, setParticipants, balances, onSelectParticipant }: ParticipantListProps) => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -38,19 +38,31 @@ const ParticipantList = ({ groupId, participants, setParticipants, balances }: P
 
 
     return (
-        <div className="participant-list-container">
-            <div className="participant-list">
-                <h2 className="participant-title">Friends</h2>
-                {error && <p className="error-message">{error}</p>}
-                <ul className="participant-items">
-                    {participants.map((participant) => (
-                        <li key={participant.user_id} className="participant-item">
-                            <img src={participant.icon} alt="Participant icon" className="participant-icon" />
-                            {participant.name} / Share: ${balances[participant.user_id] ?? 0}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+        <div className="participant-list">
+            <h2 className="participant-list__title">Friends</h2>
+            {error && <p className="ui-field-error">{error}</p>}
+            <ul className="participant-list__items">
+                {participants.map((participant) => (
+                    <li
+                        key={participant.user_id}
+                        className="participant-item"
+                        role="button"
+                        tabIndex={0}
+                        title={`Add an expense paid by ${participant.name}`}
+                        onClick={() => onSelectParticipant?.(participant.user_id)}
+                        onKeyDown={(event) => {
+                            if (event.key !== 'Enter' && event.key !== ' ') return;
+                            event.preventDefault();
+                            onSelectParticipant?.(participant.user_id);
+                        }}
+                    >
+                        <img src={participant.icon} alt="Participant icon" className="participant-icon" />
+                        <span className="participant-item__label">
+                            {participant.name} / Share: ${(balances[participant.user_id] ?? 0).toFixed(2)}
+                        </span>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };

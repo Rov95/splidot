@@ -17,6 +17,7 @@ export interface LocalExpense {
   amount: number;
   category: string;
   expenseName: string;
+  createdAt: string;
 }
 
 export interface Expense {

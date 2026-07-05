@@ -1,33 +1,102 @@
 .welcome-page {
-    background-color: #182645;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #d1d8e0;
+    gap: var(--space-6);
+    padding: var(--space-5);
 }
 
-.welcome-title {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #fff;
+.welcome-page__hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    text-align: center;
 }
 
-.signup-prompt {
-    color: #d1d8e0;
-    margin-top: 1rem;
+.welcome-page__dot {
+    width: 96px;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
 }
 
-.sign-up-option {
-    color: #45aaf2;
-    cursor: pointer;
-    font-weight: bold;
+.welcome-page__title {
+    font-size: var(--text-3xl);
+    text-shadow: 0 2px 8px rgba(6, 24, 28, 0.8);
 }
 
+.welcome-page__tagline {
+    color: var(--teal-100);
+    text-shadow: 0 1px 6px rgba(6, 24, 28, 0.9);
+}
 
-.welcome-dot-icon {
-    width: 75px;
-    height: 75px;
-    margin-left: 8px;
+.welcome-page__card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--color-surface);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-6);
+}
+
+.welcome-page__signup-prompt {
+    margin-top: var(--space-4);
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+.welcome-page__signup-link {
+    color: var(--color-accent);
+    font-weight: 600;
+    padding: 0;
+}
+
+.welcome-page__signup-link:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}
+
+/* Shared auth-form layout — SignIn and SignUp both render inside the card. */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.auth-form__title {
+    font-size: var(--text-xl);
+    text-align: center;
+}
+
+.auth-form__error {
+    color: var(--color-danger);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+
+.auth-form__switch {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    align-self: center;
+    padding: 0;
+}
+
+.auth-form__switch:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+}
+
+@media (max-width: 639px) {
+    .welcome-page__dot {
+        width: 72px;
+    }
+
+    .welcome-page__title {
+        font-size: var(--text-2xl);
+    }
 }

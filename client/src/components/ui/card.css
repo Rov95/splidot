@@ -1,0 +1,28 @@
+.ui-card {
+    background: var(--color-surface);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-5);
+}
+
+.ui-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.ui-card__title {
+    font-size: var(--text-lg);
+    color: var(--color-text);
+}
+
+.ui-card__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}

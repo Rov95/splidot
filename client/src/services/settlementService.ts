@@ -31,17 +31,17 @@ export const createSettlements = async (groupId: string): Promise<Settlement[]> 
     }
 };
 
-export const markSettlementPaid = async (settlementId: string): Promise<Settlement> => {
+export const markSettlementPaid = async (settlementId: string, isPaid: boolean): Promise<Settlement> => {
     try {
         const response = await fetch(`${SETTLEMENTS_API_URL}/${settlementId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', ...authHeaders() },
-            body: JSON.stringify({ is_paid: true }),
+            body: JSON.stringify({ is_paid: isPaid }),
         });
-        if (!response.ok) throw new Error('Failed to mark settlement as paid.');
+        if (!response.ok) throw new Error('Failed to update settlement.');
         return await response.json();
     } catch (error) {
-        console.error('Error marking settlement as paid:', error);
+        console.error('Error updating settlement:', error);
         throw error;
     }
 };

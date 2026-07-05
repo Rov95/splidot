@@ -1,0 +1,24 @@
+.ui-spinner {
+    display: inline-block;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-accent);
+    border-radius: var(--radius-full);
+    animation: ui-spinner-spin 700ms linear infinite;
+}
+
+.ui-spinner--sm {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+.ui-spinner--md {
+    width: 28px;
+    height: 28px;
+}
+
+@keyframes ui-spinner-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

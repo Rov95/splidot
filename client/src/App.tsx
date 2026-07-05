@@ -3,7 +3,7 @@ import Welcome from './pages/welcome/main/Welcome';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard/main/index';
 import { getToken, clearToken, validateSession } from './services/authService';
-import './App.css';
+import { ToastProvider } from './components/ui/Toast';
 
 export type SetIsSignedIn = Dispatch<SetStateAction<boolean>>;
 
@@ -29,22 +29,24 @@ function App() {
   };
 
   return (
-    <Router future={{ v7_relativeSplatPath: true }}>
-      <Routes>
-        <Route
-          path="/"
-          element={<Welcome setIsSignedIn={setIsSignedIn} />}
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard setIsSignedIn={setIsSignedIn} />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </Router>
+    <ToastProvider>
+      <Router future={{ v7_relativeSplatPath: true }}>
+        <Routes>
+          <Route
+            path="/"
+            element={<Welcome setIsSignedIn={setIsSignedIn} />}
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard setIsSignedIn={setIsSignedIn} />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </ToastProvider>
   );
 }
 

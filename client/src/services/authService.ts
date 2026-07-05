@@ -21,6 +21,13 @@ interface MessageResponse {
     message: string;
 }
 
+export interface CurrentUser {
+    user_id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+}
+
 export const getToken = (): string | null => localStorage.getItem(TOKEN_KEY);
 export const setToken = (token: string): void => localStorage.setItem(TOKEN_KEY, token);
 export const clearToken = (): void => localStorage.removeItem(TOKEN_KEY);
@@ -41,7 +48,11 @@ export const signUp = async (userData: SignUpData): Promise<TokenResponse> => {
         if (!response.ok) {
             throw new Error('Failed to register, please try again');
         }
-        return await response.json();
+        const data: TokenResponse = await response.json();
+        // Registering already issues a token, so new users go straight to the
+        // dashboard without a second sign-in.
+        setToken(data.token);
+        return data;
     } catch (error) {
         console.error('Error signing up: ', error);
         throw error;
@@ -80,6 +91,21 @@ export const signOut = async (): Promise<MessageResponse> => {
     } finally {
         // The token is the source of truth for being signed in, so always drop it.
         clearToken();
+    }
+};
+
+export const getCurrentUser = async (): Promise<CurrentUser> => {
+    try {
+        const response = await fetch(`${API_URL}/me`, { headers: authHeaders() });
+        if (!response.ok) {
+            throw new Error('Failed to load profile.');
+        }
+        // The server wraps the payload as { user }.
+        const data: { user: CurrentUser } = await response.json();
+        return data.user;
+    } catch (error) {
+        console.error('Error fetching current user: ', error);
+        throw error;
     }
 };
 

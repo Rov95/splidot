@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { createGroup } from '../../../services/groupService';
-// @ts-ignore: allow side-effect import for styles
+import Modal from '../../../components/ui/Modal';
+import Button from '../../../components/ui/Button';
 import './styles.css';
 
 interface GroupModalProps {
@@ -23,11 +24,17 @@ const GroupModal = ({ onClose, onGroupCreated }: GroupModalProps) => {
 
     const handleCreateGroup = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError(null);
 
         const groupData = {
-            name: groupName,
-            participants: participants.filter((p) => p !== ''),
+            name: groupName.trim(),
+            participants: participants.map((p) => p.trim()).filter((p) => p !== ''),
         };
+
+        if (!groupData.name || groupData.participants.length === 0) {
+            setError('Please add a group name and at least one participant.');
+            return;
+        }
 
         try {
             await createGroup(groupData);
@@ -41,39 +48,42 @@ const GroupModal = ({ onClose, onGroupCreated }: GroupModalProps) => {
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal">
-                <h2 className="modal-title">Create New Group</h2>
-                <form onSubmit={handleCreateGroup} className="modal-form">
-                    <label className="input-label" htmlFor="group-name">Group Name</label>
+        <Modal title="Create New Group" onClose={onClose} className="group-modal">
+            <form onSubmit={handleCreateGroup} className="group-modal__form" noValidate>
+                <div className="group-modal__field">
+                    <label className="ui-label" htmlFor="group-name">Group Name</label>
                     <input
                         id="group-name"
                         type="text"
                         value={groupName}
                         onChange={(e) => setGroupName(e.target.value)}
-                        className="input-field"
+                        className="ui-input"
                         required
                     />
-                    {participants.map((participant, index) => (
-                        <div key={index} className="participant-input">
-                            <label className="input-label" htmlFor={`participant-${index}`}>Participant {index + 1}</label>
-                            <input
-                                id={`participant-${index}`}
-                                type="text"
-                                value={participant}
-                                onChange={(e) => handleParticipantChange(index, e.target.value)}
-                                className="input-field"
-                                required
-                            />
-                        </div>
-                    ))}
-                    <button type="button" onClick={addParticipantField} className="add-participant-btn">Add a New Participant</button>
-                    <button type="submit" className="submit-btn">Create Group</button>
-                </form>
-                {error && <p className="error-message">{error}</p>}
-                <button onClick={onClose} className="close-modal-btn">Close</button>
-            </div>
-        </div>
+                </div>
+                {participants.map((participant, index) => (
+                    <div key={index} className="group-modal__field">
+                        <label className="ui-label" htmlFor={`participant-${index}`}>Participant {index + 1}</label>
+                        <input
+                            id={`participant-${index}`}
+                            type="text"
+                            value={participant}
+                            onChange={(e) => handleParticipantChange(index, e.target.value)}
+                            className="ui-input"
+                            required
+                        />
+                    </div>
+                ))}
+                <Button type="button" variant="secondary" onClick={addParticipantField}>
+                    Add a New Participant
+                </Button>
+                {error && <p className="ui-field-error">{error}</p>}
+                <div className="group-modal__actions">
+                    <Button type="button" variant="ghost" onClick={onClose}>Close</Button>
+                    <Button type="submit">Create Group</Button>
+                </div>
+            </form>
+        </Modal>
     );
 };
 

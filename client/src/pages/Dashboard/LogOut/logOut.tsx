@@ -1,7 +1,6 @@
 import { signOut } from '../../../services/authService';
+import Button from '../../../components/ui/Button';
 import type { SetIsSignedIn } from '../../../App';
-// @ts-ignore: allow side-effect import for styles
-import './styles.css';
 
 interface LogoutButtonProps {
     setIsSignedIn: SetIsSignedIn;
@@ -18,11 +17,9 @@ const LogoutButton = ({ setIsSignedIn }: LogoutButtonProps) => {
     };
 
     return (
-        <div className="logout-button-container">
-            <button onClick={handleLogout} className="logout-button">
-                Log Out
-            </button>
-        </div>
+        <Button variant="secondary" size="sm" onClick={handleLogout} className="logout-button">
+            Log Out
+        </Button>
     );
 };
 

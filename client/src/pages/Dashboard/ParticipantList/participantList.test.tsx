@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ParticipantList from './participantList';
 import { getGroupParticipants } from '../../../services/groupService';
 import type { Participant } from '../../../types';
@@ -72,5 +73,65 @@ describe('ParticipantList', () => {
     );
 
     expect(screen.getByText(/Bob \/ Share: \$0/)).toBeInTheDocument();
+  });
+
+  it('calls onSelectParticipant with the participant id when a row is clicked', async () => {
+    const participants: Participant[] = [
+      { user_id: 'a', name: 'Me', icon: '/cat1.svg' },
+      { user_id: 'b', name: 'Bob', icon: '/cat2.svg' },
+    ];
+    const onSelectParticipant = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <ParticipantList
+        groupId="g1"
+        participants={participants}
+        setParticipants={vi.fn()}
+        balances={{}}
+        onSelectParticipant={onSelectParticipant}
+      />
+    );
+
+    await user.click(screen.getByText(/Bob \/ Share/));
+
+    expect(onSelectParticipant).toHaveBeenCalledWith('b');
+    expect(onSelectParticipant).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls onSelectParticipant when a row is activated with the keyboard', async () => {
+    const participants: Participant[] = [
+      { user_id: 'a', name: 'Me', icon: '/cat1.svg' },
+    ];
+    const onSelectParticipant = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <ParticipantList
+        groupId="g1"
+        participants={participants}
+        setParticipants={vi.fn()}
+        balances={{}}
+        onSelectParticipant={onSelectParticipant}
+      />
+    );
+
+    await user.tab();
+    await user.keyboard('{Enter}');
+
+    expect(onSelectParticipant).toHaveBeenCalledWith('a');
+  });
+
+  it('does not throw when a row is clicked without an onSelectParticipant handler', async () => {
+    const participants: Participant[] = [
+      { user_id: 'a', name: 'Me', icon: '/cat1.svg' },
+    ];
+    const user = userEvent.setup();
+
+    render(
+      <ParticipantList groupId="g1" participants={participants} setParticipants={vi.fn()} balances={{}} />
+    );
+
+    await user.click(screen.getByText(/Me \/ Share/));
   });
 });

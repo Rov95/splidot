@@ -5,8 +5,8 @@ import ExpenseList from './expenseList';
 import type { LocalExpense } from '../../../types';
 
 const expenses: LocalExpense[] = [
-  { expense_id: 'e1', payerName: 'Me', amount: 40, category: 'food', expenseName: 'Dinner' },
-  { expense_id: 'e2', payerName: 'Bob', amount: 10, category: 'transport', expenseName: 'Taxi' },
+  { expense_id: 'e1', payerName: 'Me', amount: 40, category: 'food', expenseName: 'Dinner', createdAt: '2026-07-01T12:00:00Z' },
+  { expense_id: 'e2', payerName: 'Bob', amount: 10, category: 'transport', expenseName: 'Taxi', createdAt: '2026-07-02T12:00:00Z' },
 ];
 
 describe('ExpenseList', () => {

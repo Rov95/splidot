@@ -10,16 +10,13 @@ test.describe('Splidot golden path', () => {
     const pageErrors: string[] = [];
     page.on('pageerror', (err) => pageErrors.push(err.message));
 
-    // Accept the confirm() shown when deleting a group.
-    page.on('dialog', (dialog) => dialog.accept());
-
     const email = `${TEST_EMAIL_PREFIX}${Date.now()}@example.com`;
     const password = 'TestPassword123!';
 
     await page.goto('/');
     await expect(page.getByRole('heading', { name: /Welcome to Splidot/ })).toBeVisible();
 
-    // --- Sign up ---
+    // --- Sign up (registration auto-logs-in and lands on the dashboard) ---
     await page.getByText('Sign up').click();
     await page.getByLabel('First Name').fill('Test');
     await page.getByLabel('Last Name').fill('User');
@@ -27,16 +24,19 @@ test.describe('Splidot golden path', () => {
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: 'Sign Up' }).click();
 
-    // Back on the sign-in form after a successful sign-up.
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page.getByText('Welcome, Test')).toBeVisible();
+
+    // --- Log out and sign back in (keeps the sign-in path covered) ---
+    await page.locator('.logout-button').click();
     await expect(page.locator('.sign-in-form')).toBeVisible();
 
-    // --- Sign in ---
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: 'Sign In' }).click();
 
     await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByText('Groups')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Groups' })).toBeVisible();
 
     // --- Create a group ---
     await page.locator('.add-group-button').click();
@@ -78,17 +78,26 @@ test.describe('Splidot golden path', () => {
     await expect(page.locator('.settlements-display')).toBeVisible();
     await expect(page.getByText(/pays .*: \$20\.00/)).toBeVisible();
 
-    // --- Delete the expense ---
+    // --- Mark the settlement as paid, then undo it ---
+    await page.locator('.payed-button').click();
+    await expect(page.locator('img[alt="check icon"]')).toBeVisible();
+    await page.getByRole('button', { name: 'Undo' }).click();
+    await expect(page.locator('.payed-button')).toBeVisible();
+    await expect(page.locator('img[alt="cross icon"]')).toBeVisible();
+
+    // --- Delete the expense (via the confirm dialog) ---
     // Server-side this also wipes the (unpaid) settlement, so the display disappears.
     await page.locator('.delete-expense-btn').click();
+    await page.getByTestId('confirm-dialog-confirm').click();
     await expect(page.locator('.expense-list li')).toHaveCount(0);
     await expect(page.getByText('Total Paid: $0.00')).toBeVisible();
     await expect(page.locator('.settlements-display')).toHaveCount(0);
 
-    // --- Delete the group ---
+    // --- Delete the group (via the confirm dialog) ---
     await page.locator('.delete-group-btn').click();
+    await page.getByTestId('confirm-dialog-confirm').click();
     await expect(page.locator('.group-item', { hasText: TEST_GROUP_NAME })).toHaveCount(0);
-    await expect(page.getByText('Groups')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Groups' })).toBeVisible();
 
     // --- Log out ---
     await page.locator('.logout-button').click();
