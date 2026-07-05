@@ -24,7 +24,6 @@ const CategoryBreakdown = ({ expenses }: CategoryBreakdownProps) => {
 
     return (
         <div className="category-breakdown">
-            <h3 className="category-breakdown__title">Spending by category</h3>
             <ul className="category-breakdown__list">
                 {rows.map((row) => (
                     <li key={row.category} className="category-breakdown__row">

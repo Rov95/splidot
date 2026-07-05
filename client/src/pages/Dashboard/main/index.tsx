@@ -353,8 +353,6 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
                                     ) : (
                                         <ExpenseList expenses={visibleExpenses} onDeleteExpense={requestDeleteExpense} />
                                     )}
-
-                                    <CategoryBreakdown expenses={displayExpenses} />
                                 </Card>
 
                                 <Card className="dashboard__settlements-card">
@@ -366,13 +364,20 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
                                     />
                                 </Card>
                             </div>
-
-                            <Card title="Share by participant" className="dashboard__share-card">
-                                <ParticipantShare participants={participants} balances={balances} />
-                            </Card>
                         </>
                     )}
                 </main>
+
+                {selectedGroupId && displayExpenses.length > 0 && (
+                    <div className="dashboard__insights">
+                        <Card title="Spending by category">
+                            <CategoryBreakdown expenses={displayExpenses} />
+                        </Card>
+                        <Card title="Share by participant">
+                            <ParticipantShare participants={participants} balances={balances} />
+                        </Card>
+                    </div>
+                )}
             </div>
 
             {showModal && <GroupModal onClose={() => setShowModal(false)} onGroupCreated={handleGroupCreated} />}

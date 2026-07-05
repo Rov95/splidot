@@ -80,6 +80,14 @@
     align-items: start;
 }
 
+/* Bottom insights row: spending-by-category and share-by-participant
+   sit side by side (with matching heights) on wide screens and stack on narrow ones. */
+.dashboard__insights {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+}
+
 @media (max-width: 639px) {
     .dashboard__wordmark {
         display: none;
@@ -104,6 +112,22 @@
 @media (min-width: 1024px) {
     .dashboard__body {
         grid-template-columns: 300px 1fr;
+        grid-template-areas:
+            "sidebar main"
+            "insights insights";
+    }
+
+    .dashboard__sidebar {
+        grid-area: sidebar;
+    }
+
+    .dashboard__main {
+        grid-area: main;
+    }
+
+    .dashboard__insights {
+        grid-area: insights;
+        grid-template-columns: 1fr 1fr;
     }
 
     .dashboard__columns {

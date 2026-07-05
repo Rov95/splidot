@@ -1,28 +1,32 @@
 .participant-share {
     display: flex;
     align-items: center;
-    gap: var(--space-6);
-    flex-wrap: wrap;
+    gap: var(--space-5);
 }
 
 .participant-share__chart {
-    width: 160px;
-    height: 160px;
+    width: 120px;
+    height: 120px;
     border-radius: var(--radius-full);
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     flex-shrink: 0;
 }
 
+/* Names sit to the right of the chart, stacked 3 per column, then wrapping
+   into a new column so a long participant list grows sideways, not tall. */
 .participant-share__legend {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    flex: 1 1 220px;
-    min-width: 200px;
+    display: grid;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(120px, auto);
+    gap: var(--space-2) var(--space-5);
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
 }
 
 .participant-share__legend-item {
@@ -55,10 +59,11 @@
 @media (max-width: 639px) {
     .participant-share {
         flex-direction: column;
-        align-items: center;
     }
 
     .participant-share__legend {
+        display: flex;
+        flex-direction: column;
         width: 100%;
     }
 }
