@@ -12,7 +12,7 @@ describe('ParticipantList', () => {
     vi.mocked(getGroupParticipants).mockReset();
   });
 
-  it('fetches participants for the group and marks the first as "Me"', async () => {
+  it('fetches participants for the group and assigns cyclical cat icons, keeping their given names', async () => {
     vi.mocked(getGroupParticipants).mockResolvedValue([
       { user_id: 'a', name: 'Alice' },
       { user_id: 'b', name: 'Bob' },
@@ -25,7 +25,7 @@ describe('ParticipantList', () => {
 
     await vi.waitFor(() => expect(setParticipants).toHaveBeenCalled());
     const passed = setParticipants.mock.calls[0][0] as Participant[];
-    expect(passed[0]).toMatchObject({ user_id: 'a', name: 'Me', icon: '/cat1.svg' });
+    expect(passed[0]).toMatchObject({ user_id: 'a', name: 'Alice', icon: '/cat1.svg' });
     expect(passed[1]).toMatchObject({ user_id: 'b', name: 'Bob', icon: '/cat2.svg' });
   });
 
@@ -48,7 +48,7 @@ describe('ParticipantList', () => {
 
   it('renders the participants passed in via props with their balances', () => {
     const participants: Participant[] = [
-      { user_id: 'a', name: 'Me', icon: '/cat1.svg' },
+      { user_id: 'a', name: 'Alice', icon: '/cat1.svg' },
     ];
 
     render(
@@ -60,7 +60,7 @@ describe('ParticipantList', () => {
       />
     );
 
-    expect(screen.getByText(/Me \/ Share: \$40/)).toBeInTheDocument();
+    expect(screen.getByText(/Alice \/ Share: \$40/)).toBeInTheDocument();
   });
 
   it('shows a zero share for participants without a balance entry', () => {
@@ -77,7 +77,7 @@ describe('ParticipantList', () => {
 
   it('calls onSelectParticipant with the participant id when a row is clicked', async () => {
     const participants: Participant[] = [
-      { user_id: 'a', name: 'Me', icon: '/cat1.svg' },
+      { user_id: 'a', name: 'Alice', icon: '/cat1.svg' },
       { user_id: 'b', name: 'Bob', icon: '/cat2.svg' },
     ];
     const onSelectParticipant = vi.fn();
@@ -101,7 +101,7 @@ describe('ParticipantList', () => {
 
   it('calls onSelectParticipant when a row is activated with the keyboard', async () => {
     const participants: Participant[] = [
-      { user_id: 'a', name: 'Me', icon: '/cat1.svg' },
+      { user_id: 'a', name: 'Alice', icon: '/cat1.svg' },
     ];
     const onSelectParticipant = vi.fn();
     const user = userEvent.setup();
@@ -124,7 +124,7 @@ describe('ParticipantList', () => {
 
   it('does not throw when a row is clicked without an onSelectParticipant handler', async () => {
     const participants: Participant[] = [
-      { user_id: 'a', name: 'Me', icon: '/cat1.svg' },
+      { user_id: 'a', name: 'Alice', icon: '/cat1.svg' },
     ];
     const user = userEvent.setup();
 
@@ -132,6 +132,6 @@ describe('ParticipantList', () => {
       <ParticipantList groupId="g1" participants={participants} setParticipants={vi.fn()} balances={{}} />
     );
 
-    await user.click(screen.getByText(/Me \/ Share/));
+    await user.click(screen.getByText(/Alice \/ Share/));
   });
 });

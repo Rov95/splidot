@@ -59,7 +59,7 @@ test.describe('Splidot golden path', () => {
     // --- Select the group and load its participants ---
     await groupItem.click();
     await expect(page.locator('.participant-item')).toHaveCount(2);
-    await expect(page.getByText(/Me \/ Share/)).toBeVisible();
+    await expect(page.getByText(/Alice \/ Share/)).toBeVisible();
     await expect(page.getByText(/Bob \/ Share/)).toBeVisible();
 
     // --- Add an expense ---

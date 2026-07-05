@@ -23,7 +23,6 @@ const ParticipantList = ({ groupId, participants, setParticipants, balances, onS
 
                 const initialParticipants: Participant[] = data.map((participant, index) => ({
                     ...participant,
-                    name: index === 0 ? 'Me' : participant.name, // Set first participant as 'Me'
                     icon: `/cat${(index % 6) + 1}.svg` // Assign icons cyclically from cat1.svg to cat6.svg
                 }));
 

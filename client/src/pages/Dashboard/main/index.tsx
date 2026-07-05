@@ -122,9 +122,8 @@ const Dashboard = ({ setIsSignedIn }: DashboardProps) => {
         showToast('Group created', 'success');
     };
 
-    // Participant names come from the server, but the first participant is renamed
-    // to 'Me' client-side (in ParticipantList), so display names are resolved
-    // against the local participant list first.
+    // Prefer the local participant list (loaded once per group) over the
+    // per-expense server fallback, since it's already in hand and avoids a flash.
     const displayName = (userId: string, fallback: string | null) =>
         participants.find((participant) => participant.user_id === userId)?.name ?? fallback ?? 'Unknown';
 
